@@ -1,0 +1,88 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ImGuiImPlotGraphs (Debug) Windows",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "windows": {
+                // Adjust the path to the Debug executable (rebuild before debugging!)
+                "program": "${workspaceFolder}/Demo/ImGuiImPlotGraphs/buildNinjaMC/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+/*
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildMake/Gnu/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildMake/Clang/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNMake/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinja/Gnu/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinja/Clang/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinja/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinjaMC/Gnu/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinjaMC/Clang/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinjaMC/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildVS/x32/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+                "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildVS/x64/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d.exe"
+*/
+            },
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "ImGuiImPlotGraphs (Debug) Linux/Mac",
+            "type": "cppdbg",
+            "request": "launch",
+            // Adjust the path to the Debug executable (rebuild before debugging!)
+            "linux": {
+                "program": "${workspaceFolder}/Demo/ImGuiImPlotGraphs/buildNinjaMC/Gnu/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d"
+            },
+            "osx": {
+                "program": "${workspaceFolder}/Demo/ImGuiImPlotGraphs/buildNinjaMC/Clang/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d"
+            },
+/*
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildMake/Gnu/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildMake/Clang/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNMake/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinja/Gnu/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinja/Clang/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinja/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinjaMC/Gnu/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinjaMC/Clang/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildNinjaMC/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildVS/x32/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+            "program": "${workspaceFolder}/Cpp/Demo/ImGuiImPlotGraphs/buildVS/x64/Msvc/buildOut/ImPlotGraphs/bin/Debug/ImPlotGraphs_d",
+*/
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

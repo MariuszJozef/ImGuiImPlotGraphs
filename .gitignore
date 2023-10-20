@@ -1,0 +1,4 @@
+build*/
+External/**/
+!External/fonts/
+!External/glad4.1/
