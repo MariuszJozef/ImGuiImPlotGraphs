@@ -2,7 +2,7 @@
 
 This demo exemplifies how to use ImPlot (in conjunction with ImGui and SDL2 backend) to plot interactive graphs in a C++ program.
 
-For a beginners example of how to use in a C++ project just ImGui without ImPlot, please refer to: s
+For a beginners example of how to use in a C++ project just ImGui without ImPlot, please refer to:
 [SDLImGuiTriangle](https://github.com/MariuszJozef/SDLImGuiTriangle.git).
 
 ```

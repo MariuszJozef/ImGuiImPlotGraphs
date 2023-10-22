@@ -95,7 +95,7 @@ void ImGuiView::DrawView1(ImPlotFrame* imPlotFrame)
             imPlotFrame->plot3.Graph();
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Animated KdV Soliton Collisions"))
+        if (ImGui::BeginTabItem("KdV Soliton Collisions"))
         {
             DrawSubView1ForPlot4(imPlotFrame);
             imPlotFrame->plot4.Graph();
@@ -254,16 +254,15 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
             ImGui::SameLine();
             ImGui::SetNextItemWidth(150);
-            ImGui::SliderFloat("##label2: TIME", imPlotFrame->plot4.GetSetTimeViaPtr(), 0.0F, 20.0F, "time = %.1f");
+            ImGui::SliderFloat("##label2: TIME", imPlotFrame->plot4.GetSetTimeViaPtr(), 0.0F, imPlotFrame->plot4.SolitonApproxTravelTime(), "time = %.1f");
 
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                ImGui::SetTooltip("time in arbitrary units");
+                ImGui::SetTooltip("time in arbitrary units, max time: %.1f", imPlotFrame->plot4.SolitonApproxTravelTime());
 
             ImGui::PopStyleColor(4);
         ImGui::PopID();
     }
 
-    // ImGui::SameLine(0.0f, 20.0f);
     ImGui::SameLine();
     ImGui::SetNextItemWidth(200);
     ImGui::Combo("##label3: SOLITON COMBO", imPlotFrame->plot4.GetSetSelectedSolitonComboItemViaPtr(), imPlotFrame->plot4.GetSolitonStartOfComboList(), imPlotFrame->plot4.GetSolitonComboDescriptionSize());
@@ -278,10 +277,28 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
             ImGui::SameLine();
             ImGui::SetNextItemWidth(350);
-            ImGui::SliderFloat4("##label4: WAVE NUMBER", imPlotFrame->plot4.GetSetWaveNumberKViaPtr(), 0.5f, 2.5f, "%.1f");
 
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                ImGui::SetTooltip("wave number components: 0, 1, 2, 3");
+            if (imPlotFrame->plot4.GetSolitonCount() == 2)
+            {
+                ImGui::SliderFloat2("##label4: WAVE NUMBER", imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 0.4f, 2.8f, "%.2f");
+
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                    ImGui::SetTooltip("wave number components: 0, 1");
+            }
+            else if (imPlotFrame->plot4.GetSolitonCount() == 3)
+            {
+                ImGui::SliderFloat3("##label4: WAVE NUMBER", imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 0.4f, 2.8f, "%.2f");
+
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                    ImGui::SetTooltip("wave number components: 0, 1, 2");
+            }
+            else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+            {
+                ImGui::SliderFloat4("##label4: WAVE NUMBER", imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 0.4f, 2.8f, "%.2f");
+
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                    ImGui::SetTooltip("wave number components: 0, 1, 2, 3");
+            }
 
         ImGui::PopStyleColor(4);
         ImGui::PopID();
@@ -297,10 +314,28 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
             ImGui::SameLine();
             ImGui::SetNextItemWidth(350);
-            ImGui::SliderFloat4("##label5: PHASE SHIFT", imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), -35.0f, 0.0f, "%.1f");
 
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                ImGui::SetTooltip("phase shift components: 0, 1, 2, 3");
+            if (imPlotFrame->plot4.GetSolitonCount() == 2)
+            {
+                ImGui::SliderFloat2("##label5: PHASE SHIFT", imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), -35.0f, 25.0f, "%.1f");
+
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                    ImGui::SetTooltip("phase shift components: 0, 1");
+            }
+            else if (imPlotFrame->plot4.GetSolitonCount() == 3)
+            {
+                ImGui::SliderFloat3("##label5: PHASE SHIFT", imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), -35.0f, 25.0f, "%.1f");
+
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                    ImGui::SetTooltip("phase shift components: 0, 1, 2");
+            }
+            else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+            {
+                ImGui::SliderFloat4("##label5: PHASE SHIFT", imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), -35.0f, 25.0f, "%.1f");
+
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                    ImGui::SetTooltip("phase shift components: 0, 1, 2, 3");
+            }
 
         ImGui::PopStyleColor(4);
         ImGui::PopID();
@@ -319,23 +354,69 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
             if (imPlotFrame->plot4.GetTime() > 0.0f)
             {
-                ImGui::BeginGroup();
+                if (imPlotFrame->plot4.GetSolitonCount() == 2)
                 {
-                    ImGui::BeginDisabled();
-                        ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
-                    ImGui::EndDisabled();
-                }
-                ImGui::EndGroup();
+                    ImGui::BeginGroup();
+                    {
+                        ImGui::BeginDisabled();
+                            ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                        ImGui::EndDisabled();
+                    }
+                    ImGui::EndGroup();
 
-                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("Initial position correction of 2nd, 3rd, 4th \"ghost\" soliton - only adjustible at time = 0");
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Initial position correction of 2nd \"ghost\" soliton - only adjustible at time = 0");
+                }
+                else if (imPlotFrame->plot4.GetSolitonCount() == 3)
+                {
+                    ImGui::BeginGroup();
+                    {
+                        ImGui::BeginDisabled();
+                            ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                        ImGui::EndDisabled();
+                    }
+                    ImGui::EndGroup();
+
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd \"ghost\" soliton - only adjustible at time = 0");
+                }
+                else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+                {
+                    ImGui::BeginGroup();
+                    {
+                        ImGui::BeginDisabled();
+                            ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                        ImGui::EndDisabled();
+                    }
+                    ImGui::EndGroup();
+
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd, 4th \"ghost\" soliton - only adjustible at time = 0");
+                }
             }
             else
             {
-                ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                if (imPlotFrame->plot4.GetSolitonCount() == 2)
+                {
+                    ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
-                if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("Initial position correction of 2nd, 3rd, 4th \"ghost\" soliton - only adjustible at time = 0");
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Initial position correction of 2nd \"ghost\" soliton - only adjustible at time = 0");
+                }
+                else if (imPlotFrame->plot4.GetSolitonCount() == 3)
+                {
+                    ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd \"ghost\" soliton - only adjustible at time = 0");
+                }
+                else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+                {
+                    ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd, 4th \"ghost\" soliton - only adjustible at time = 0");
+                }
             }
 
         ImGui::PopStyleColor(4);
