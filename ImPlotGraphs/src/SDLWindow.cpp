@@ -59,7 +59,7 @@ void SDLWindow::RunFrameLoop()
     while (!isQuit)
     {
         EnforceFrameRateLimit enforceFrameRateLimit {60u, 5u};
-        RunEventsLoop(isQuit, enforceFrameRateLimit.GetSetViaRefIsGuiIdle());
+        RunEventsLoop(isQuit, enforceFrameRateLimit.SetViaRefIsGuiIdle());
         UpdateScene();
         DrawScene();
         PresentScene();

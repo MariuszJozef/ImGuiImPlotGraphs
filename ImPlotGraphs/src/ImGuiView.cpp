@@ -116,7 +116,7 @@ void ImGuiView::DrawView1(ImPlotFrame* imPlotFrame)
 void ImGuiView::DrawSubView1ForPlot1(ImPlotFrame* imPlotFrame)
 {
     ImGui::SetNextItemWidth(350);
-    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot1.GetSetPlotPointsPerUnitLength(), 1, imPlotFrame->plot1.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
+    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot1.SetPlotPointsPerUnitLength(), 1, imPlotFrame->plot1.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
     
     std::stringstream formatText;
     formatText << "x-mesh size: " 
@@ -127,41 +127,41 @@ void ImGuiView::DrawSubView1ForPlot1(ImPlotFrame* imPlotFrame)
         ImGui::SetTooltip("%s", formatText.str().c_str());
 
     ImGui::SameLine();
-    ImGui::Checkbox("plot points", imPlotFrame->plot1.GetSetIsMarkersViaPtr());
+    ImGui::Checkbox("plot points", imPlotFrame->plot1.SetIsMarkersViaPtr());
 
     ImGui::SameLine();
     ImGui::SetNextItemWidth(60);
-    ImGui::Checkbox("zoom", imPlotFrame->plot1.GetSetIsZoomViaPtr());
+    ImGui::Checkbox("zoom", imPlotFrame->plot1.SetIsZoomViaPtr());
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(280);
-    ImGui::Combo("##label2: X DOMAIN", imPlotFrame->plot1.GetSetSelectedXAxisDomainViaPtr(), imPlotFrame->plot1.GetXAxisDomainStartOfComboList(), imPlotFrame->plot1.GetXAxisDomainSize());
+    ImGui::Combo("##label2: X DOMAIN", imPlotFrame->plot1.SetSelectedXAxisDomainViaPtr(), imPlotFrame->plot1.GetXAxisDomainStartOfComboList(), imPlotFrame->plot1.GetXAxisDomainSize());
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(200);
-    ImGui::SliderFloat("##label3: AMPLITUDE", imPlotFrame->plot1.GetSetAmplitudeViaPtr(), -imPlotFrame->plot1.GetAmplitudeMax(), imPlotFrame->plot1.GetAmplitudeMax(), "amplitude: A = %.1F");
+    ImGui::SliderFloat("##label3: AMPLITUDE", imPlotFrame->plot1.SetAmplitudeViaPtr(), -imPlotFrame->plot1.GetAmplitudeMax(), imPlotFrame->plot1.GetAmplitudeMax(), "amplitude: A = %.1F");
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(225);
-    ImGui::SliderFloat("##label4: WAVELENGTH", imPlotFrame->plot1.GetSetWavelengthViaPtr(), 0.0F, 5 * std::numbers::pi, "wavelength: B = %.2F");
+    ImGui::SliderFloat("##label4: WAVELENGTH", imPlotFrame->plot1.SetWavelengthViaPtr(), 0.0F, 5 * std::numbers::pi, "wavelength: B = %.2F");
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(160);
-    ImGui::SliderFloat("##label5: X-SHIFT", imPlotFrame->plot1.GetSetXShiftViaPtr(), -5.0F, 5.0F, "x-shift: C = %.1F");
+    ImGui::SliderFloat("##label5: X-SHIFT", imPlotFrame->plot1.SetXShiftViaPtr(), -5.0F, 5.0F, "x-shift: C = %.1F");
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(160);
-    ImGui::SliderFloat("##label6: Y-SHIFT", imPlotFrame->plot1.GetSetYShiftViaPtr(), -5.0F, 5.0F, "y-shift: D = %.1F");
+    ImGui::SliderFloat("##label6: Y-SHIFT", imPlotFrame->plot1.SetYShiftViaPtr(), -5.0F, 5.0F, "y-shift: D = %.1F");
     
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(150);
-    ImGui::SliderInt("##label7: COLOUR", imPlotFrame->plot1.GetSetSelectedPlotColourViaPtr(), 0, imPlotFrame->plot1.GetPlotColourSize() - 1, imPlotFrame->plot1.GetPlotColourName().c_str());
+    ImGui::SliderInt("##label7: COLOUR", imPlotFrame->plot1.SetSelectedPlotColourViaPtr(), 0, imPlotFrame->plot1.GetPlotColourSize() - 1, imPlotFrame->plot1.GetPlotColourName().c_str());
 }
 
 void ImGuiView::DrawSubView1ForPlot2(ImPlotFrame* imPlotFrame)
 {
     ImGui::SetNextItemWidth(350);
-    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot2.GetSetPlotPointsPerUnitLength(), 1, imPlotFrame->plot2.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
+    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot2.SetPlotPointsPerUnitLength(), 1, imPlotFrame->plot2.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
     
     std::stringstream formatText;
     formatText << "x-mesh size: " 
@@ -173,21 +173,21 @@ void ImGuiView::DrawSubView1ForPlot2(ImPlotFrame* imPlotFrame)
 
     ImGui::SameLine();
     ImGui::SetNextItemWidth(60);
-    ImGui::Checkbox("zoom", imPlotFrame->plot2.GetSetIsZoomViaPtr());
+    ImGui::Checkbox("zoom", imPlotFrame->plot2.SetIsZoomViaPtr());
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(250);
-    ImGui::SliderFloat("##label2: AMPLITUDE", imPlotFrame->plot2.GetSetAmplitudeViaPtr(), 0.0F, 5.0F, "amplitude: A = %.1F");
+    ImGui::SliderFloat("##label2: AMPLITUDE", imPlotFrame->plot2.SetAmplitudeViaPtr(), 0.0F, 5.0F, "amplitude: A = %.1F");
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(250);
-    ImGui::SliderFloat("##label3: WIDTH", imPlotFrame->plot2.GetSetWidthViaPtr(), 0.0F, 5.0F, "width: a = %.1F");
+    ImGui::SliderFloat("##label3: WIDTH", imPlotFrame->plot2.SetWidthViaPtr(), 0.0F, 5.0F, "width: a = %.1F");
 }
 
 void ImGuiView::DrawSubView1ForPlot3(ImPlotFrame* imPlotFrame)
 {
     ImGui::SetNextItemWidth(350);
-    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot3.GetSetPlotPointsPerUnitLength(), 1, imPlotFrame->plot3.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
+    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot3.SetPlotPointsPerUnitLength(), 1, imPlotFrame->plot3.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
     
     std::stringstream formatText;
     formatText << "x-mesh size: " 
@@ -199,36 +199,36 @@ void ImGuiView::DrawSubView1ForPlot3(ImPlotFrame* imPlotFrame)
 
     ImGui::SameLine();
     ImGui::SetNextItemWidth(60);
-    ImGui::Checkbox("zoom", imPlotFrame->plot3.GetSetIsZoomViaPtr());
+    ImGui::Checkbox("zoom", imPlotFrame->plot3.SetIsZoomViaPtr());
 
         ImGui::SameLine(0.0f, 20.0f);
         ImGui::SetNextItemWidth(300);
-        ImGui::SliderInt("##label2: LIGHT COLOUR AND WAVELENGTH", imPlotFrame->plot3.GetSetSelectedLightViaPtr(), 0, imPlotFrame->plot3.GetLighColourAndWavelengthSize() - 1, imPlotFrame->plot3.GetLighColourName().c_str());
+        ImGui::SliderInt("##label2: LIGHT COLOUR AND WAVELENGTH", imPlotFrame->plot3.SetSelectedLightViaPtr(), 0, imPlotFrame->plot3.GetLighColourAndWavelengthSize() - 1, imPlotFrame->plot3.GetLighColourName().c_str());
 
         ImGui::SameLine(0.0f, 20.0f);
         ImGui::SetNextItemWidth(250);
-        ImGui::SliderFloat("##label3: SLIT WIDTH", imPlotFrame->plot3.GetSetSlitWidthViaPtr(), 1.0E-2, 2.0E0, "slit width:  %.1E (mm)");
+        ImGui::SliderFloat("##label3: SLIT WIDTH", imPlotFrame->plot3.SetSlitWidthViaPtr(), 1.0E-2, 2.0E0, "slit width:  %.1E (mm)");
         
         ImGui::SameLine(0.0f, 20.0f);
         ImGui::SetNextItemWidth(200);
-        ImGui::SliderInt("##label4: SLIT NUMBER", imPlotFrame->plot3.GetSetSlitNumberViaPtr(), 0, 9, "number of slits: %d");
+        ImGui::SliderInt("##label4: SLIT NUMBER", imPlotFrame->plot3.SetSlitNumberViaPtr(), 0, 9, "number of slits: %d");
 
-        if (*imPlotFrame->plot3.GetSetSlitNumberViaPtr() > 1)
+        if (*imPlotFrame->plot3.SetSlitNumberViaPtr() > 1)
         {
             ImGui::SameLine(0.0f, 20.0f);
             ImGui::SetNextItemWidth(300);
-            ImGui::SliderFloat("##label5: SLIT SEPARATION", imPlotFrame->plot3.GetSetSlitSeparationViaPtr(), 1.0E-2, 6.0E0, "slit separation: %.1E (mm)");
+            ImGui::SliderFloat("##label5: SLIT SEPARATION", imPlotFrame->plot3.SetSlitSeparationViaPtr(), 1.0E-2, 6.0E0, "slit separation: %.1E (mm)");
         }
 
         ImGui::SameLine(0.0f, 20.0f);
         ImGui::SetNextItemWidth(300);
-        ImGui::SliderFloat("##label6: SCREEN DISTANCE", imPlotFrame->plot3.GetSetScreenPerpDistanceViaPtr(), 1.0E2, 2.0E3, "screen distance: %.1E (mm)");
+        ImGui::SliderFloat("##label6: SCREEN DISTANCE", imPlotFrame->plot3.SetScreenPerpDistanceViaPtr(), 1.0E2, 2.0E3, "screen distance: %.1E (mm)");
 }
 
 void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 {
     ImGui::SetNextItemWidth(300);
-    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot4.GetSetPlotPointsPerUnitLength(), 1, imPlotFrame->plot4.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
+    ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot4.SetPlotPointsPerUnitLength(), 1, imPlotFrame->plot4.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
     
     std::stringstream formatText;
     formatText << "x-mesh size: " 
@@ -240,7 +240,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
     ImGui::SameLine();
     ImGui::SetNextItemWidth(60);
-    ImGui::Checkbox("zoom", imPlotFrame->plot4.GetSetIsZoomViaPtr());
+    ImGui::Checkbox("zoom", imPlotFrame->plot4.SetIsZoomViaPtr());
 
     {
         static int i = 0;
@@ -252,7 +252,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
             ImGui::SameLine();
             ImGui::SetNextItemWidth(150);
             ImGui::SliderFloat("##label2: TIME", 
-                imPlotFrame->plot4.GetSetTimeViaPtr(), 
+                imPlotFrame->plot4.SetTimeViaPtr(), 
                 0.0F, 
                 imPlotFrame->plot4.SolitonMaxTravelTime(), 
                 "time = %.1f");
@@ -265,7 +265,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
     ImGui::SameLine();
     ImGui::SetNextItemWidth(170);
-    ImGui::Combo("##label3: SOLITON COMBO", imPlotFrame->plot4.GetSetSelectedSolitonComboItemViaPtr(), imPlotFrame->plot4.GetSolitonStartOfComboList(), imPlotFrame->plot4.GetSolitonComboDescriptionSize());
+    ImGui::Combo("##label3: SOLITON COMBO", imPlotFrame->plot4.SetSelectedSolitonComboItemViaPtr(), imPlotFrame->plot4.GetSolitonStartOfComboList(), imPlotFrame->plot4.GetSolitonComboDescriptionSize());
 
     {
         static int i = 1;
@@ -280,7 +280,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
             if (imPlotFrame->plot4.GetSolitonCount() == 2)
             {
                 ImGui::SliderFloat2("##label4: WAVE NUMBER", 
-                    imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 
+                    imPlotFrame->plot4.SetWaveNumberViaPtr(), 
                     imPlotFrame->plot4.GetWaveNumberMinMax().first,
                     imPlotFrame->plot4.GetWaveNumberMinMax().second,
                     "%.2f");
@@ -299,7 +299,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
             else if (imPlotFrame->plot4.GetSolitonCount() == 3)
             {
                 ImGui::SliderFloat3("##label4: WAVE NUMBER", 
-                    imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 
+                    imPlotFrame->plot4.SetWaveNumberViaPtr(), 
                     imPlotFrame->plot4.GetWaveNumberMinMax().first,
                     imPlotFrame->plot4.GetWaveNumberMinMax().second,
                     "%.2f");
@@ -318,7 +318,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
             else if (imPlotFrame->plot4.GetSolitonCount() == 4)
             {
                 ImGui::SliderFloat4("##label4: WAVE NUMBER", 
-                    imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 
+                    imPlotFrame->plot4.SetWaveNumberViaPtr(), 
                     imPlotFrame->plot4.GetWaveNumberMinMax().first,
                     imPlotFrame->plot4.GetWaveNumberMinMax().second,
                     "%.2f");
@@ -351,43 +351,43 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
             if (imPlotFrame->plot4.GetSolitonCount() == 2)
             {
                 ImGui::SliderFloat2("##label5: PHASE SHIFT", 
-                    imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), 
+                    imPlotFrame->plot4.SetPhaseShiftViaPtr(), 
                     imPlotFrame->plot4.GetPhaseShiftMinMax().first, 
                     imPlotFrame->plot4.GetPhaseShiftMinMax().second, 
                     "%.1f");
 
-                std::stringstream formatText;
-                formatText << std::setprecision(1) << std::fixed 
+                std::stringstream formatText1;
+                formatText1 << std::setprecision(1) << std::fixed 
                     << "phase shift components: 0, 1\t(imply positions of peaks)\n\n"
                     << "therefore max time: "
                     << imPlotFrame->plot4.SolitonMaxTravelTime()
                     << "\t(proportional to distance to edge of slowest peak)";
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("%s", formatText.str().c_str());
+                    ImGui::SetTooltip("%s", formatText1.str().c_str());
             }
             else if (imPlotFrame->plot4.GetSolitonCount() == 3)
             {
                 ImGui::SliderFloat3("##label5: PHASE SHIFT", 
-                    imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), 
+                    imPlotFrame->plot4.SetPhaseShiftViaPtr(), 
                     imPlotFrame->plot4.GetPhaseShiftMinMax().first, 
                     imPlotFrame->plot4.GetPhaseShiftMinMax().second, 
                     "%.1f");
 
-                std::stringstream formatText;
-                formatText << std::setprecision(1) << std::fixed 
+                std::stringstream formatText2;
+                formatText2 << std::setprecision(1) << std::fixed 
                     << "phase shift components: 0, 1, 2\t(imply positions of peaks)\n\n"
                     << "therefore max time: "
                     << imPlotFrame->plot4.SolitonMaxTravelTime()
                     << "\t(proportional to distance to edge of slowest peak)";
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("phase %s", formatText.str().c_str());
+                    ImGui::SetTooltip("%s", formatText2.str().c_str());
             }
             else if (imPlotFrame->plot4.GetSolitonCount() == 4)
             {
                 ImGui::SliderFloat4("##label5: PHASE SHIFT", 
-                    imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), 
+                    imPlotFrame->plot4.SetPhaseShiftViaPtr(), 
                     imPlotFrame->plot4.GetPhaseShiftMinMax().first, 
                     imPlotFrame->plot4.GetPhaseShiftMinMax().second, 
                     "%.1f");
@@ -400,7 +400,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
                     << "\t(proportional to distance to edge of slowest peak)";
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("phase shift %s", formatText.str().c_str());
+                    ImGui::SetTooltip("%s", formatText.str().c_str());
             }
 
         ImGui::PopStyleColor(4);
@@ -423,63 +423,63 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
                     ImGui::BeginGroup();
                     {
                         ImGui::BeginDisabled();
-                            ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                            ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.SetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
                         ImGui::EndDisabled();
                     }
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1\n\nshift to align with multi-soliton solution\n\nonly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 3)
                 {
                     ImGui::BeginGroup();
                     {
                         ImGui::BeginDisabled();
-                            ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                            ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.SetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
                         ImGui::EndDisabled();
                     }
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2\n\nshift to align with multi-soliton solution\n\nonly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 4)
                 {
                     ImGui::BeginGroup();
                     {
                         ImGui::BeginDisabled();
-                            ImGui::SliderFloat4("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                            ImGui::SliderFloat4("##label6: GHOST POSITION", imPlotFrame->plot4.SetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
                         ImGui::EndDisabled();
                     }
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2, 3\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2, 3\n\nshift to align with multi-soliton solution\n\nonly adjustible at time = 0");
                 }
             }
             else
             {
                 if (imPlotFrame->plot4.GetSolitonCount() == 2)
                 {
-                    ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                    ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.SetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1\n\nshift to align with multi-soliton solution\n\nonly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 3)
                 {
-                    ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                    ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.SetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2\n\nshift to align with multi-soliton solution\n\nonly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 4)
                 {
-                    ImGui::SliderFloat4("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                    ImGui::SliderFloat4("##label6: GHOST POSITION", imPlotFrame->plot4.SetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2, 3\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2, 3\n\nshift to align with multi-soliton solution\n\nonly adjustible at time = 0");
                 }
             }
 
@@ -494,7 +494,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
             ImGui::SameLine();
             ImGui::SetNextItemWidth(240);
-            ImGui::SliderFloat("##label7: INTEGRATION CONSTANT", imPlotFrame->plot4.GetSetIntegrationConstViaPtr(), -1.5f, 0.5f, "integration const. = %.2f");
+            ImGui::SliderFloat("##label7: INTEGRATION CONSTANT", imPlotFrame->plot4.SetIntegrationConstViaPtr(), -1.5f, 0.5f, "integration const. = %.2f");
 
             std::stringstream formatText;
             formatText << "solitonVelocity = waveNumber^2 + 6 * integrationConstant\n\n"
@@ -513,7 +513,7 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
 {
     ImGui::SetNextItemWidth(350);
-    ImGui::SliderInt("##label1: PLOT POINTS: PLOT POINTS", imPlotFrame->plot5.GetSetPlotPointsPerUnitLength(), 1, imPlotFrame->plot5.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
+    ImGui::SliderInt("##label1: PLOT POINTS: PLOT POINTS", imPlotFrame->plot5.SetPlotPointsPerUnitLength(), 1, imPlotFrame->plot5.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
     
     std::stringstream formatText;
     formatText << "x-mesh size: " 
@@ -525,7 +525,7 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
 
     ImGui::SameLine();
     ImGui::SetNextItemWidth(60);
-    ImGui::Checkbox("zoom", imPlotFrame->plot5.GetSetIsZoomViaPtr());
+    ImGui::Checkbox("zoom", imPlotFrame->plot5.SetIsZoomViaPtr());
 }
 
 void ImGuiView::HandleActionsOfView1()

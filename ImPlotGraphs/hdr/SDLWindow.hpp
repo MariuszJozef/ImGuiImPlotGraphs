@@ -39,7 +39,7 @@ private:
         EnforceFrameRateLimit(unsigned int framesPerSecBusy = 60, unsigned int framesPerSecIdle = 5);
         ~EnforceFrameRateLimit();
 
-        bool& GetSetViaRefIsGuiIdle() { return isGuiIdle; }
+        bool& SetViaRefIsGuiIdle() { return isGuiIdle; }
 
     private:
         bool isGuiIdle {true};

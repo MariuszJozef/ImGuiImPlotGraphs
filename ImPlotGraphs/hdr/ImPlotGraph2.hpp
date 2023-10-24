@@ -11,8 +11,8 @@ public:
     Plot2();
     void Graph() override;
 
-    float* GetSetAmplitudeViaPtr() { return &amplitude; }
-    float* GetSetWidthViaPtr() { return &width; }
+    float* SetAmplitudeViaPtr() { return &amplitude; }
+    float* SetWidthViaPtr() { return &width; }
 
 private:
     void CalculatePlotCoordinates() override;

@@ -1,5 +1,4 @@
 #include <cmath>
-#include <string>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
@@ -39,37 +38,31 @@ void Plot4::CalculatePlotCoordinates()
     for (int i = 0; i < plotPoints; ++i) 
     {
         x.push_back(xMin + i * xIncrement);
-        y1.push_back(Soliton(x.at(i), time));
+        y1.push_back(MultiSoliton(x.at(i), time));
 
-        y2.push_back(SolitonGhost1(x.at(i), time, waveNumber[0], phaseShift[0] + ghostEmpiricalPositionCorrection.at(0)));
-        y3.push_back(SolitonGhost2(x.at(i), time, waveNumber[1], phaseShift[1] + ghostEmpiricalPositionCorrection.at(1)));
+        y2.push_back(SingleSolitonGhost(x.at(i), time, waveNumber[0], 
+            phaseShift[0] + ghostEmpiricalPositionCorrection.at(0))
+        );
 
-        double ghostLinearSuperposition = y2.at(i); // one integrationConst is included here
-        ghostLinearSuperposition += y3.at(i) - integrationConst;
+        y3.push_back(SingleSolitonGhost(x.at(i), time, waveNumber[1], 
+            phaseShift[1] + ghostEmpiricalPositionCorrection.at(1))
+        );
 
         if (GetSolitonCount() >= 3)
         {
-            y4.push_back(SolitonGhost2(x.at(i), time, waveNumber[2], phaseShift[2] + ghostEmpiricalPositionCorrection.at(2)));
-            
-            ghostLinearSuperposition += y4.at(i) - integrationConst;
+            y4.push_back(SingleSolitonGhost(x.at(i), time, waveNumber[2], 
+                phaseShift[2] + ghostEmpiricalPositionCorrection.at(2))
+            );
         }
 
         if (GetSolitonCount() == 4)
         {
-            y5.push_back(SolitonGhost1(x.at(i), time, waveNumber[3], phaseShift[3] + ghostEmpiricalPositionCorrection.at(3)));
-
-            ghostLinearSuperposition += y5.at(i) - integrationConst;
+            y5.push_back(SingleSolitonGhost(x.at(i), time, waveNumber[3], 
+                phaseShift[3] + ghostEmpiricalPositionCorrection.at(3))
+            );
         }
 
-        y6.push_back(ghostLinearSuperposition);
-    }
-
-    yMin = integrationConst;
-
-    if (time == 0.0)
-    {
-        auto max = std::max_element(begin(y1), end(y1));
-        yMax = std::ceil(*max);
+        y6.push_back(GhostSuperposition(x.at(i), time));
     }
 }
 
@@ -98,6 +91,8 @@ bool Plot4::CheckIsNeedReplot()
     {
         waveNumberOld = waveNumber;
         isNeedReplot = true;
+        auto max = std::max_element(begin(y1), end(y1));
+        yMax = std::ceil(*max);
     }
     else if (phaseShiftOld != phaseShift)
     {
@@ -118,6 +113,9 @@ bool Plot4::CheckIsNeedReplot()
     {
         integrationConstOld = integrationConst;
         isNeedReplot = true;
+        yMin = integrationConst;
+        auto max = std::max_element(begin(y1), end(y1));
+        yMax = std::ceil(*max);
     }
 
     if (isNeedReplot)
@@ -235,7 +233,7 @@ void Plot4::Graph()
         // ImPlot::SetNextLineStyle(ImVec4(128.0/255, 128.0/255, 128.0/255, 1), 2.0F);
         // ImPlot::SetNextLineStyle(ImVec4(56.0/255, 83.0/255, 75.0/255, 1), 2.0F);
         ImPlot::SetNextLineStyle(ImVec4(25.0/255, 188.0/255, 55.0/255, 1), 2.0F);
-        ImPlot::PlotLine("Hypothetical linear superposition of \"ghost\" solitons", x.data(), y6.data(), plotPoints);
+        ImPlot::PlotLine("Fictitious linear superposition of \"ghost\" solitons", x.data(), y6.data(), plotPoints);
 
         ImPlot::EndPlot();
     }
@@ -411,25 +409,42 @@ double Plot4::Denominator(double x, double t)
     return denominator;
 }
 
-double Plot4::Soliton(double x, double t)
+double Plot4::MultiSoliton(double x, double t)
 {
     return 2 * Numerator1(x, t) / Denominator(x, t)
         - 2 * std::pow(Numerator2(x, t) / Denominator(x, t), 2)
         + integrationConst;
 }
 
-double Plot4::SolitonGhost1(double x, double t, double waveNumber_, double phaseShift_)
+double Plot4::SingleSolitonGhost(double x, double t, double waveNumber_, double phaseShift_)
+{
+    double sechArg = 1.0 / std::cosh(0.5 * PhaseArg(x, t, waveNumber_, phaseShift_));
+    return 0.5 * waveNumber_ * waveNumber_ * sechArg * sechArg
+        + integrationConst;
+}
+
+/*  EQUIVALENT EXPRESSION:
+double Plot4::SingleSolitonGhost(double x, double t, double waveNumber_, double phaseShift_)
 {
     double expArg = std::exp(PhaseArg(x, t, waveNumber_, phaseShift_));
     return 2 * waveNumber_ * waveNumber_ * expArg / std::pow(1 + expArg, 2)
         + integrationConst;
 }
+*/
 
-double Plot4::SolitonGhost2(double x, double t, double waveNumber_, double phaseShift_)
+double Plot4::GhostSuperposition(double x, double t)
 {
-    double sechArg = 1.0 / std::cosh(0.5 * PhaseArg(x, t, waveNumber_, phaseShift_));
-    return 0.5 * waveNumber_ * waveNumber_ * sechArg * sechArg
-        + integrationConst;
+    double superposition {integrationConst}; // add integrationConst just once!
+
+    for (int i = 0; i < GetSolitonCount(); i++)
+    {
+        superposition += SingleSolitonGhost(x, t, 
+            waveNumber[i], 
+            phaseShift[i] + ghostEmpiricalPositionCorrection[i]) 
+            - integrationConst; // do not add the integrationConst multiple times!
+    }
+
+    return superposition;
 }
 
 std::vector<float> Plot4::SolitonVelocity()
@@ -485,7 +500,7 @@ float Plot4::SolitonMaxTravelTime()
         }
         if (std::abs(solitonVelocity.at(i)) < 0.5)
         {
-            // exclude snail-pace velocity, it would make the time exceedingly long
+            // exclude snail-pace velocity, it would make the travel time exceedingly long
             continue;
         }
         else if (solitonVelocity.at(i) > 0.0f)

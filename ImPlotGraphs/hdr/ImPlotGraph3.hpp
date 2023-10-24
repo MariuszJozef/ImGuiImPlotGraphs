@@ -16,12 +16,12 @@ public:
     Plot3();
     void Graph() override;
 
-    float* GetSetSlitWidthViaPtr() { return &slitWidthMm; }
-    int* GetSetSlitNumberViaPtr() { return &slitNumber; }
-    float* GetSetSlitSeparationViaPtr() { return &slitSeparationMm; }
-    float* GetSetScreenPerpDistanceViaPtr() { return &screenPerpDistanceMm; }
+    float* SetSlitWidthViaPtr() { return &slitWidthMm; }
+    int* SetSlitNumberViaPtr() { return &slitNumber; }
+    float* SetSlitSeparationViaPtr() { return &slitSeparationMm; }
+    float* SetScreenPerpDistanceViaPtr() { return &screenPerpDistanceMm; }
 
-    int* GetSetSelectedLightViaPtr() { return &selectedLight; }
+    int* SetSelectedLightViaPtr() { return &selectedLight; }
     std::string GetLighColourName() { return std::get<0>(lightColourAndWavelength.at(selectedLight)); }
     int GetLighColourAndWavelengthSize() { return lightColourAndWavelength.size(); }
 

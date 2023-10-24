@@ -11,16 +11,16 @@ public:
     Plot4();
     void Graph() override;
 
-    float* GetSetTimeViaPtr() { return &time; }
+    float* SetTimeViaPtr() { return &time; }
     float GetTime() const { return time; }
-    float* GetSetWaveNumberViaPtr() { return waveNumber.data(); }
+    float* SetWaveNumberViaPtr() { return waveNumber.data(); }
     std::pair<float, float> GetWaveNumberMinMax() const { return std::make_pair(0.4f, 2.8f); }
-    float* GetSetPhaseShiftViaPtr() { return phaseShift.data(); }
+    float* SetPhaseShiftViaPtr() { return phaseShift.data(); }
     std::pair<float, float> GetPhaseShiftMinMax() const { return std::make_pair(xMin + 5.0f, xMax - 5.0f); }
-    float* GetSetGhostEmpiricalPositionCorrectionViaPtr() { return ghostEmpiricalPositionCorrection.data(); }
-    float* GetSetIntegrationConstViaPtr() { return &integrationConst; }
+    float* SetGhostEmpiricalPositionCorrectionViaPtr() { return ghostEmpiricalPositionCorrection.data(); }
+    float* SetIntegrationConstViaPtr() { return &integrationConst; }
 
-    int* GetSetSelectedSolitonComboItemViaPtr() { return &selectedSolitonComboItem; }
+    int* SetSelectedSolitonComboItemViaPtr() { return &selectedSolitonComboItem; }
     const char * const * GetSolitonStartOfComboList() { return solitonComboDescription.data(); }
     int GetSolitonComboDescriptionSize() { return solitonComboDescription.size(); }
 
@@ -50,9 +50,9 @@ private:
     double Numerator1(double x, double t);
     double Numerator2(double x, double t);
     double Denominator(double x, double t);
-    double SolitonGhost1(double x, double t, double waveNumber_, double phaseShift_);
-    double SolitonGhost2(double x, double t, double waveNumber_, double phaseShift_);
-    double Soliton(double x, double t);
+    double MultiSoliton(double x, double t);
+    double SingleSolitonGhost(double x, double t, double waveNumber_, double phaseShift_);
+    double GhostSuperposition(double x, double t);
 
 private:
     std::vector<double> x;
@@ -74,7 +74,7 @@ private:
     double xMin {-40.0};
     double xMax {-xMin};
     double yMin {integrationConst};
-    double yMax {Soliton(phaseShift[0], 0)};
+    double yMax {MultiSoliton(phaseShift[0], 0)};
     int selectedSolitonComboItem {2};
     std::vector<const char*> solitonComboDescription {
         "two solitons",

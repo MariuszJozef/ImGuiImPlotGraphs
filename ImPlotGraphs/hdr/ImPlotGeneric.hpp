@@ -11,8 +11,8 @@ public:
 
     double GetXIncrement() { return xIncrement; }
     int GetMaxPlotPointsPerUnitLength() { return maxPlotPointsPerUnitLength; }
-    int* GetSetPlotPointsPerUnitLength() { return &plotPointsPerUnitLength; }
-    bool* GetSetIsZoomViaPtr() { return &isZoom; }
+    int* SetPlotPointsPerUnitLength() { return &plotPointsPerUnitLength; }
+    bool* SetIsZoomViaPtr() { return &isZoom; }
 
 protected:
     virtual void CalculatePlotCoordinates() = 0;

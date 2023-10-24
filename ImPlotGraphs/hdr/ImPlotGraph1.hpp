@@ -15,14 +15,14 @@ public:
     Plot1();
     void Graph() override;
 
-    bool* GetSetIsMarkersViaPtr() { return &isMarkers; }
-    float* GetSetAmplitudeViaPtr() { return &amplitude; }
+    bool* SetIsMarkersViaPtr() { return &isMarkers; }
+    float* SetAmplitudeViaPtr() { return &amplitude; }
     float GetAmplitudeMax() { return amplitudeMax; }
-    float* GetSetWavelengthViaPtr() { return &wavelength; }
-    float* GetSetXShiftViaPtr() { return &xShift; }
-    float* GetSetYShiftViaPtr() { return &yShift; }
-    int* GetSetSelectedPlotColourViaPtr() { return &selectedPlotColour; }
-    int* GetSetSelectedXAxisDomainViaPtr() { return &selectedXAxisDomain; }
+    float* SetWavelengthViaPtr() { return &wavelength; }
+    float* SetXShiftViaPtr() { return &xShift; }
+    float* SetYShiftViaPtr() { return &yShift; }
+    int* SetSelectedPlotColourViaPtr() { return &selectedPlotColour; }
+    int* SetSelectedXAxisDomainViaPtr() { return &selectedXAxisDomain; }
     const char * const * GetXAxisDomainStartOfComboList() { return &xAxisDomain.at(0); }
     std::string GetPlotColourName() { return plotColour.at(selectedPlotColour).first; }
     int GetPlotColourSize() { return plotColour.size(); }
