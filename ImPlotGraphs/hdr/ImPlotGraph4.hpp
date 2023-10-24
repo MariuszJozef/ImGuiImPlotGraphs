@@ -81,15 +81,6 @@ private:
         "three solitons",
         "four solitons"
     };
-
-    // enum class SolitonInteraction
-    // {
-    //     twoSolitons,
-    //     threeSolitons,
-    //     fourSolitons
-    // };
-    
-    // SolitonInteraction solitonInteraction {static_cast<SolitonInteraction>(selectedSolitonComboItem)};
 };
 
 } // ~namespace Code::ImGuiImPlot
