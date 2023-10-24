@@ -1,7 +1,5 @@
 #include <iostream>
-
 #include "imgui.h"
-
 #include "ImGuiView.hpp"
 #include "ImGuiFonts.hpp"
 #include "ImPlotFrame.hpp"
@@ -101,7 +99,7 @@ void ImGuiView::DrawView1(ImPlotFrame* imPlotFrame)
             imPlotFrame->plot4.Graph();
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Soliton Collisions vs Linear Supperposition"))
+        if (ImGui::BeginTabItem("KdV Soliton Collision Animations"))
         {
             DrawSubView1ForPlot5(imPlotFrame);
             imPlotFrame->plot5.Graph();
@@ -229,7 +227,7 @@ void ImGuiView::DrawSubView1ForPlot3(ImPlotFrame* imPlotFrame)
 
 void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 {
-    ImGui::SetNextItemWidth(350);
+    ImGui::SetNextItemWidth(300);
     ImGui::SliderInt("##label1: PLOT POINTS", imPlotFrame->plot4.GetSetPlotPointsPerUnitLength(), 1, imPlotFrame->plot4.GetMaxPlotPointsPerUnitLength(), "plot points per unit length: %d");
     
     std::stringstream formatText;
@@ -246,7 +244,6 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
     {
         static int i = 0;
-        ImGui::PushID(i);
         ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(i / 7.0f, 0.5f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
@@ -254,103 +251,170 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
             ImGui::SameLine();
             ImGui::SetNextItemWidth(150);
-            ImGui::SliderFloat("##label2: TIME", imPlotFrame->plot4.GetSetTimeViaPtr(), 0.0F, imPlotFrame->plot4.SolitonApproxTravelTime(), "time = %.1f");
+            ImGui::SliderFloat("##label2: TIME", 
+                imPlotFrame->plot4.GetSetTimeViaPtr(), 
+                0.0F, 
+                imPlotFrame->plot4.SolitonMaxTravelTime(), 
+                "time = %.1f");
 
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                ImGui::SetTooltip("time in arbitrary units, max time: %.1f", imPlotFrame->plot4.SolitonApproxTravelTime());
+                ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot4.SolitonMaxTravelTime());
 
             ImGui::PopStyleColor(4);
-        ImGui::PopID();
     }
 
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(200);
+    ImGui::SetNextItemWidth(170);
     ImGui::Combo("##label3: SOLITON COMBO", imPlotFrame->plot4.GetSetSelectedSolitonComboItemViaPtr(), imPlotFrame->plot4.GetSolitonStartOfComboList(), imPlotFrame->plot4.GetSolitonComboDescriptionSize());
 
     {
         static int i = 1;
-        ImGui::PushID(i);
         ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(i / 7.0f, 0.5f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
 
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(350);
+            ImGui::SetNextItemWidth(300);
 
             if (imPlotFrame->plot4.GetSolitonCount() == 2)
             {
-                ImGui::SliderFloat2("##label4: WAVE NUMBER", imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 0.4f, 2.8f, "%.2f");
+                ImGui::SliderFloat2("##label4: WAVE NUMBER", 
+                    imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 
+                    imPlotFrame->plot4.GetWaveNumberMinMax().first,
+                    imPlotFrame->plot4.GetWaveNumberMinMax().second,
+                    "%.2f");
+
+                std::stringstream formatText;
+                formatText << "wave number components: 0, 1\n\n"
+                    << "solitonVelocity = waveNumber^2 + 6 * integrationConstant"
+                    << std::setprecision(2) << std::fixed 
+                    << "\n\ntherefore soliton velocities: " << imPlotFrame->plot4.SolitonVelocityStr()
+                    << std::setprecision(1) << std::fixed 
+                    << "\nand therefore  max time: " << imPlotFrame->plot4.SolitonMaxTravelTime();
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("wave number components: 0, 1");
+                    ImGui::SetTooltip("%s", formatText.str().c_str());
             }
             else if (imPlotFrame->plot4.GetSolitonCount() == 3)
             {
-                ImGui::SliderFloat3("##label4: WAVE NUMBER", imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 0.4f, 2.8f, "%.2f");
+                ImGui::SliderFloat3("##label4: WAVE NUMBER", 
+                    imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 
+                    imPlotFrame->plot4.GetWaveNumberMinMax().first,
+                    imPlotFrame->plot4.GetWaveNumberMinMax().second,
+                    "%.2f");
+
+                std::stringstream formatText;
+                formatText << "wave number components: 0, 1, 2\n\n"
+                    << "solitonVelocity = waveNumber^2 + 6 * integrationConstant"
+                    << std::setprecision(2) << std::fixed 
+                    << "\n\ntherefore soliton velocities: " << imPlotFrame->plot4.SolitonVelocityStr()
+                    << std::setprecision(1) << std::fixed 
+                    << "\nand therefore  max time: " << imPlotFrame->plot4.SolitonMaxTravelTime();
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("wave number components: 0, 1, 2");
+                    ImGui::SetTooltip("%s", formatText.str().c_str());
             }
             else if (imPlotFrame->plot4.GetSolitonCount() == 4)
             {
-                ImGui::SliderFloat4("##label4: WAVE NUMBER", imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 0.4f, 2.8f, "%.2f");
+                ImGui::SliderFloat4("##label4: WAVE NUMBER", 
+                    imPlotFrame->plot4.GetSetWaveNumberViaPtr(), 
+                    imPlotFrame->plot4.GetWaveNumberMinMax().first,
+                    imPlotFrame->plot4.GetWaveNumberMinMax().second,
+                    "%.2f");
+
+                std::stringstream formatText;
+                formatText << "wave number components: 0, 1, 2, 3\n\n"
+                    << "solitonVelocity = waveNumber^2 + 6 * integrationConstant"
+                    << std::setprecision(2) << std::fixed 
+                    << "\n\ntherefore soliton velocities: " << imPlotFrame->plot4.SolitonVelocityStr()
+                    << std::setprecision(1) << std::fixed 
+                    << "\nand therefore  max time: " << imPlotFrame->plot4.SolitonMaxTravelTime();
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("wave number components: 0, 1, 2, 3");
+                    ImGui::SetTooltip("%s", formatText.str().c_str());
             }
 
         ImGui::PopStyleColor(4);
-        ImGui::PopID();
     }
 
     {
         static int i = 2;
-        ImGui::PushID(i);
         ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(i / 7.0f, 0.5f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
 
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(350);
+            ImGui::SetNextItemWidth(300);
 
             if (imPlotFrame->plot4.GetSolitonCount() == 2)
             {
-                ImGui::SliderFloat2("##label5: PHASE SHIFT", imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), -35.0f, 25.0f, "%.1f");
+                ImGui::SliderFloat2("##label5: PHASE SHIFT", 
+                    imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), 
+                    imPlotFrame->plot4.GetPhaseShiftMinMax().first, 
+                    imPlotFrame->plot4.GetPhaseShiftMinMax().second, 
+                    "%.1f");
+
+                std::stringstream formatText;
+                formatText << std::setprecision(1) << std::fixed 
+                    << "phase shift components: 0, 1\t(imply positions of peaks)\n\n"
+                    << "therefore max time: "
+                    << imPlotFrame->plot4.SolitonMaxTravelTime()
+                    << "\t(proportional to distance to edge of slowest peak)";
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("phase shift components: 0, 1");
+                    ImGui::SetTooltip("%s", formatText.str().c_str());
             }
             else if (imPlotFrame->plot4.GetSolitonCount() == 3)
             {
-                ImGui::SliderFloat3("##label5: PHASE SHIFT", imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), -35.0f, 25.0f, "%.1f");
+                ImGui::SliderFloat3("##label5: PHASE SHIFT", 
+                    imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), 
+                    imPlotFrame->plot4.GetPhaseShiftMinMax().first, 
+                    imPlotFrame->plot4.GetPhaseShiftMinMax().second, 
+                    "%.1f");
+
+                std::stringstream formatText;
+                formatText << std::setprecision(1) << std::fixed 
+                    << "phase shift components: 0, 1, 2\t(imply positions of peaks)\n\n"
+                    << "therefore max time: "
+                    << imPlotFrame->plot4.SolitonMaxTravelTime()
+                    << "\t(proportional to distance to edge of slowest peak)";
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("phase shift components: 0, 1, 2");
+                    ImGui::SetTooltip("phase %s", formatText.str().c_str());
             }
             else if (imPlotFrame->plot4.GetSolitonCount() == 4)
             {
-                ImGui::SliderFloat4("##label5: PHASE SHIFT", imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), -35.0f, 25.0f, "%.1f");
+                ImGui::SliderFloat4("##label5: PHASE SHIFT", 
+                    imPlotFrame->plot4.GetSetPhaseShiftViaPtr(), 
+                    imPlotFrame->plot4.GetPhaseShiftMinMax().first, 
+                    imPlotFrame->plot4.GetPhaseShiftMinMax().second, 
+                    "%.1f");
+
+                std::stringstream formatText;
+                formatText << std::setprecision(1) << std::fixed 
+                    << "phase shift components: 0, 1, 2, 3\t(imply positions of peaks)\n\n"
+                    << "therefore max time: "
+                    << imPlotFrame->plot4.SolitonMaxTravelTime()
+                    << "\t(proportional to distance to edge of slowest peak)";
 
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                    ImGui::SetTooltip("phase shift components: 0, 1, 2, 3");
+                    ImGui::SetTooltip("phase shift %s", formatText.str().c_str());
             }
 
         ImGui::PopStyleColor(4);
-        ImGui::PopID();
     }
 
     {
         static int i = 6;
-        ImGui::PushID(i);
         ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(i / 7.0f, 0.5f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
         ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
 
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(350);
+            ImGui::SetNextItemWidth(250);
 
             if (imPlotFrame->plot4.GetTime() > 0.0f)
             {
@@ -359,68 +423,90 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
                     ImGui::BeginGroup();
                     {
                         ImGui::BeginDisabled();
-                            ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                            ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
                         ImGui::EndDisabled();
                     }
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Initial position correction of 2nd \"ghost\" soliton - only adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 3)
                 {
                     ImGui::BeginGroup();
                     {
                         ImGui::BeginDisabled();
-                            ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                            ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
                         ImGui::EndDisabled();
                     }
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd \"ghost\" soliton - only adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 4)
                 {
                     ImGui::BeginGroup();
                     {
                         ImGui::BeginDisabled();
-                            ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                            ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
                         ImGui::EndDisabled();
                     }
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd, 4th \"ghost\" soliton - only adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd, 4th \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
             }
             else
             {
                 if (imPlotFrame->plot4.GetSolitonCount() == 2)
                 {
-                    ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                    ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Initial position correction of 2nd \"ghost\" soliton - only adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 3)
                 {
-                    ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                    ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd \"ghost\" soliton - only adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
                 else if (imPlotFrame->plot4.GetSolitonCount() == 4)
                 {
-                    ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                    ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Initial position correction of 2nd, 3rd, 4th \"ghost\" soliton - only adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd, 4th \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
             }
 
         ImGui::PopStyleColor(4);
-        ImGui::PopID();
+    }
+
+    {
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(0.5f / 7.0f, 0.5f, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(0.5f / 7.0f, 0.6f, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(0.5f / 7.0f, 0.7f, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(0.5f / 7.0f, 0.9f, 0.9f));
+
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(240);
+            ImGui::SliderFloat("##label7: INTEGRATION CONSTANT", imPlotFrame->plot4.GetSetIntegrationConstViaPtr(), -1.5f, 0.5f, "integration const. = %.2f");
+
+            std::stringstream formatText;
+            formatText << "solitonVelocity = waveNumber^2 + 6 * integrationConstant\n\n"
+                << std::setprecision(2) << std::fixed 
+                << "therefore soliton velocities: " << imPlotFrame->plot4.SolitonVelocityStr()
+                << std::setprecision(1) << std::fixed 
+                << "\nand therefore max time: " << imPlotFrame->plot4.SolitonMaxTravelTime();
+
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                ImGui::SetTooltip("%s", formatText.str().c_str());
+
+        ImGui::PopStyleColor(4);
     }
 }
 

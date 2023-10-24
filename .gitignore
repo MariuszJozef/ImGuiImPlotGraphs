@@ -1,4 +1,8 @@
+# Ignore directories
 build*/
 External/**/
 !External/fonts/
 !External/glad4.1/
+
+# Ignore files
+ImPlotGraphs/**/imgui.ini

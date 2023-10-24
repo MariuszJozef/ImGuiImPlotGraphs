@@ -11,26 +11,32 @@ public:
     Plot4();
     void Graph() override;
 
-    // double* GetSetTimeViaPtr() { return &time; }
-    float* GetSetTimeViaPtr() { return &fTime; }
-    float GetTime() const { return fTime; }
+    float* GetSetTimeViaPtr() { return &time; }
+    float GetTime() const { return time; }
     float* GetSetWaveNumberViaPtr() { return waveNumber.data(); }
+    std::pair<float, float> GetWaveNumberMinMax() const { return std::make_pair(0.4f, 2.8f); }
     float* GetSetPhaseShiftViaPtr() { return phaseShift.data(); }
-    float* GetSetGhostPositionCorrectionViaPtr() { return ghostPositionCorrection.data(); }
+    std::pair<float, float> GetPhaseShiftMinMax() const { return std::make_pair(xMin + 5.0f, xMax - 5.0f); }
+    float* GetSetGhostEmpiricalPositionCorrectionViaPtr() { return ghostEmpiricalPositionCorrection.data(); }
+    float* GetSetIntegrationConstViaPtr() { return &integrationConst; }
 
     int* GetSetSelectedSolitonComboItemViaPtr() { return &selectedSolitonComboItem; }
     const char * const * GetSolitonStartOfComboList() { return solitonComboDescription.data(); }
     int GetSolitonComboDescriptionSize() { return solitonComboDescription.size(); }
 
     unsigned long GetSolitonCount() const { return selectedSolitonComboItem + 2ul; }
-    float SolitonApproxTravelTime();
+    std::vector<float> SolitonVelocity();
+    std::string SolitonVelocityStr();
+    float SolitonMaxTravelTime();
 
 private:
     void CalculatePlotCoordinates() override;
     bool CheckIsNeedReplot() override;
 
-    auto GenerateXTicksAndXLabels();
-    auto GenerateYTicksAndYLabels();
+    // auto GenerateXTicksAndXLabels();
+    // auto GenerateYTicksAndYLabels();
+    std::pair<std::vector<double>, std::vector<const char*>> GenerateXTicksAndXLabels();
+    std::pair<std::vector<double>, std::vector<const char*>> GenerateYTicksAndYLabels();
 
     double CouplingA(int i, int j);
     double CouplingAA(int i, int j);
@@ -57,20 +63,17 @@ private:
     std::vector<double> y3;
     std::vector<double> y4;
     std::vector<double> y5;
-    // std::vector<double> xTicks;
-    // std::vector<double> yTicks;
-    // std::vector<const char*> xLabels;
-    // std::vector<const char*> yLabels;
     
-    std::vector<float> waveNumber {2, 1.7, 1.4, 1};
-    std::vector<float> phaseShift {-35, -25, -15, -7};
-    std::vector<float> ghostPositionCorrection {3.05f, 5.91f, 8.46f};
-    // const double integrationConst = {-2.0/3.0};
-    // const float integrationConst = {-2.0f/3.0f};
-    const float integrationConst = {0.0f};
+    std::vector<float> waveNumber {2.0f, 1.7f, 1.4f, 1.0f};
+    std::vector<float> phaseShift {-35.0f, -25.0f, -15.0f, -7.0f};
+    float integrationConst = {-2.0f/3.0f};
+/*
+    TRIAL AND ERROR CORRECTIONS TO INITIAL PEAK LOCATION OF GHOST SOLITONS:
+    the zeroth ghost sits exactly at phaseShift[0] and is not represented in ghostEmpiricalPositionCorrection
+*/
+    std::vector<float> ghostEmpiricalPositionCorrection {3.05f, 5.91f, 8.46f};
 
-    float fTime {0.0f};
-    double time {0.0};
+    float time {0.0f};
     double xMin {-40.0};
     double xMax {-xMin};
     double yMin {integrationConst};

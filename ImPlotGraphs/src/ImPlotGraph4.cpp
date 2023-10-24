@@ -1,7 +1,10 @@
 #include <cmath>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #include <algorithm>
 #include <utility>
+#include <stdexcept>
 #include "implot.h"
 #include "ImPlotGraph4.hpp"
 
@@ -32,24 +35,29 @@ void Plot4::CalculatePlotCoordinates()
     xIncrement = (xMax - xMin) / (plotPoints - 1);
 
     // TRIAL AND ERROR CORRECTIONS TO INITIAL POSITION OF GHOST SOLITON
-    double adjust2ndGhostInitialPosition = phaseShift[1] + ghostPositionCorrection.at(0);
-    double adjust3rdGhostInitialPosition = phaseShift[2] + ghostPositionCorrection.at(1);
-    double adjust4thGhostInitialPosition = phaseShift[3] + ghostPositionCorrection.at(2);
-
-    time = fTime;
+    float adjust2ndGhostInitialPosition = phaseShift[1] + ghostEmpiricalPositionCorrection.at(0);
+    float adjust3rdGhostInitialPosition = phaseShift[2] + ghostEmpiricalPositionCorrection.at(1);
+    float adjust4thGhostInitialPosition = phaseShift[3] + ghostEmpiricalPositionCorrection.at(2);
 
     for (int i = 0; i < plotPoints; ++i) 
     {
         x.push_back(xMin + i * xIncrement);
         y1.push_back(Soliton(x.at(i), time));
+
         y2.push_back(SolitonGhost1(x.at(i), time, waveNumber[0], phaseShift[0]));
         y3.push_back(SolitonGhost2(x.at(i), time, waveNumber[1], adjust2ndGhostInitialPosition));
-        y4.push_back(SolitonGhost2(x.at(i), time, waveNumber[2], adjust3rdGhostInitialPosition));
-        y5.push_back(SolitonGhost1(x.at(i), time, waveNumber[3], adjust4thGhostInitialPosition));
+
+        if (GetSolitonCount() >= 3)
+            y4.push_back(SolitonGhost2(x.at(i), time, waveNumber[2], adjust3rdGhostInitialPosition));
+
+        if (GetSolitonCount() == 4)
+            y5.push_back(SolitonGhost1(x.at(i), time, waveNumber[3], adjust4thGhostInitialPosition));
     }
 
+        yMin = integrationConst;
     if (time == 0.0)
     {
+        // yMax = Soliton(phaseShift[0], 0);
         auto max = std::max_element(begin(y1), end(y1));
         yMax = std::ceil(*max);
     }
@@ -59,20 +67,21 @@ bool Plot4::CheckIsNeedReplot()
 {
     static bool isNeedReplot {true};
     static int plotPointsPerUnitLengthOld {plotPointsPerUnitLength};
-    static float fTimeOld {fTime};
+    static float timeOld {time};
     static std::vector<float> waveNumberOld {waveNumber};
     static std::vector<float> phaseShiftOld {phaseShift};
-    static std::vector<float> ghostPositionCorrectionOld {ghostPositionCorrection};
+    static std::vector<float> ghostEmpiricalPositionCorrectionOld {ghostEmpiricalPositionCorrection};
     static int selectedSolitonComboItemOld {selectedSolitonComboItem};
+    static float integrationConstOld {integrationConst};
 
     if (plotPointsPerUnitLengthOld != plotPointsPerUnitLength)
     {
         plotPointsPerUnitLengthOld = plotPointsPerUnitLength;
         isNeedReplot = true;
     }
-    else if (fTimeOld != fTime)
+    else if (timeOld != time)
     {
-        fTimeOld = fTime;
+        timeOld = time;
         isNeedReplot = true;
     }
     else if (waveNumberOld != waveNumber)
@@ -85,14 +94,19 @@ bool Plot4::CheckIsNeedReplot()
         phaseShiftOld = phaseShift;
         isNeedReplot = true;
     }
-    else if (ghostPositionCorrectionOld != ghostPositionCorrection)
+    else if (ghostEmpiricalPositionCorrectionOld != ghostEmpiricalPositionCorrection)
     {
-        ghostPositionCorrectionOld = ghostPositionCorrection;
+        ghostEmpiricalPositionCorrectionOld = ghostEmpiricalPositionCorrection;
         isNeedReplot = true;
     }
     else if (selectedSolitonComboItemOld != selectedSolitonComboItem)
     {
         selectedSolitonComboItemOld = selectedSolitonComboItem;
+        isNeedReplot = true;
+    }
+    else if (integrationConstOld != integrationConst)
+    {
+        integrationConstOld = integrationConst;
         isNeedReplot = true;
     }
 
@@ -105,7 +119,7 @@ bool Plot4::CheckIsNeedReplot()
     return isNeedReplot;
 }
 
-auto Plot4::GenerateXTicksAndXLabels()
+std::pair<std::vector<double>, std::vector<const char*>> Plot4::GenerateXTicksAndXLabels()
 {
     std::pair<std::vector<double>, std::vector<const char*>> ret {};
 
@@ -115,55 +129,35 @@ auto Plot4::GenerateXTicksAndXLabels()
     xTicks = std::vector<double> {-40, -30, -20, -10, 0, 10, 20, 30, 40};
     xLabels = std::vector<const char*> {"-40", "-30", "-20", "-10", "0", "10", "20", "30", "40"};
 
+    if (xTicks.size() != xLabels.size())
+    {
+        std::stringstream message;
+        message << "Error: GenerateXTicksAndXLabels: Size mismatch! xTicks.size(): " << xTicks.size() 
+            << ", xLabels.size(): " << xLabels.size();
+
+        throw std::runtime_error(message.str());
+    }
+
     return ret;
 }
 
-auto Plot4::GenerateYTicksAndYLabels()
+std::pair<std::vector<double>, std::vector<const char*>> Plot4::GenerateYTicksAndYLabels()
 {
     std::pair<std::vector<double>, std::vector<const char*>> ret {};
 
     auto& yTicks = ret.first;
     auto& yLabels = ret.second;
 
-    if (yMax <= 0.5)
+    yTicks = std::vector<double> {-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4};
+    yLabels = std::vector<const char*> {"-2", "-1,5", "-1", "-0.5", "0", "0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4"};
+
+    if (yTicks.size() != yLabels.size())
     {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5"};
-    }
-    else if (yMax <= 1)
-    {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5, 1};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5", "1"};
-    }
-    else if (yMax <= 1.5)
-    {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5, 1, 1.5};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5", "1", "1.5"};
-    }
-    else if (yMax <= 2)
-    {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5, 1, 1.5, 2};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5", "1", "1.5", "2"};
-    }
-    else if (yMax <= 2.5)
-    {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5", "1", "1.5", "2", "2.5"};
-    }
-    else if (yMax <= 3)
-    {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5", "1", "1.5", "2", "2.5", "3"};
-    }
-    else if (yMax <= 3.5)
-    {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5", "1", "1.5", "2", "2.5", "3", "3.5"};
-    }
-    else if (yMax <= 4)
-    {
-        yTicks = std::vector<double> {-1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4};
-        yLabels = std::vector<const char*> {"-1", "-0.5", "0", "0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4"};
+        std::stringstream message;
+        message << "Error: GenerateYTicksAndYLabels: Size mismatch! yTicks.size(): " << yTicks.size() 
+            << ", yLabels.size(): " << yLabels.size();
+
+        throw std::runtime_error(message.str());
     }
 
     return ret;
@@ -178,28 +172,18 @@ void Plot4::Graph()
 
     if (ImPlot::BeginPlot("Collision of solitons: an (exact) N-soliton solution u(x, t) of nonlinear KdV equation: u_t + 6 u * u_x + u_{xxx} = 0", ImVec2(-1, -1), ImPlotFlags_Crosshairs))
     {
-        ImPlot::SetupAxis(ImAxis_X1, "x axis (arbitrary units)");
-        ImPlot::SetupAxis(ImAxis_Y1, "y axis (arbitrary units)");
+        ImPlot::SetupAxis(ImAxis_X1, "x axis (dimensionless - no units)");
+        ImPlot::SetupAxis(ImAxis_Y1, "y axis (dimensionless - no units)");
 
-        double yMinExtra = yMin - 0.5;
-        double yMaxExtra = yMax - integrationConst;
-
-        if (yMax <= 1)
-            yMaxExtra += 0.25;
-        else if (yMax <= 2)
-            yMaxExtra += 0.5;
-        else if (yMax <= 3)
-            yMaxExtra += 0.75;
-        else if (yMax <= 4)
-            yMaxExtra += 1;
+        double extraForLegend = yMax + 0.5;
 
         if (isZoom)
         {
-            ImPlot::SetupAxesLimits(xMin - gap, xMax + gap, yMinExtra - gap, yMaxExtra + gap, ImPlotCond_None);
+            ImPlot::SetupAxesLimits(xMin - gap, xMax + gap, yMin - gap, extraForLegend + gap, ImPlotCond_None);
         }
         else
         {
-            ImPlot::SetupAxesLimits(xMin - gap, xMax + gap, yMinExtra - gap, yMaxExtra + gap, ImPlotCond_Always);
+            ImPlot::SetupAxesLimits(xMin - gap, xMax + gap, yMin - gap, extraForLegend + gap, ImPlotCond_Always);
         }
 
         auto [xTicks, xLabels] = GenerateXTicksAndXLabels();
@@ -290,10 +274,11 @@ double Plot4::CouplingCCC(int i, int j, int k, int l)
 std::vector<double> Plot4::PhaseArg(double x, double t)
 {
     std::vector<double> phaseArg(GetSolitonCount());
+    std::vector<float> velocity = SolitonVelocity();
 
     for (long unsigned i = 0; i < GetSolitonCount(); ++i)
     {
-        phaseArg[i] = waveNumber[i] * (x - waveNumber[i] * waveNumber[i] * t - phaseShift[i]);
+        phaseArg[i] = waveNumber[i] * (x - velocity.at(i) * t - phaseShift[i]);
     }
 
     return phaseArg;
@@ -301,7 +286,8 @@ std::vector<double> Plot4::PhaseArg(double x, double t)
 
 double Plot4::PhaseArg(double x, double t, double waveNumber_, double phaseShift_)
 {
-    return waveNumber_ * (x - waveNumber_ * waveNumber_ * t - phaseShift_);
+    double velocity = waveNumber_ * waveNumber_ + 6.0 * integrationConst;
+    return waveNumber_ * (x - velocity * t - phaseShift_);
 }
 
 double Plot4::Numerator1(double x, double t)
@@ -430,22 +416,67 @@ double Plot4::SolitonGhost2(double x, double t, double waveNumber_, double phase
         + integrationConst;
 }
 
-float Plot4::SolitonApproxTravelTime()
+std::vector<float> Plot4::SolitonVelocity()
 {
-    std::vector<float> solitonSpeeds {};
+    std::vector<float> velocity(GetSolitonCount());
 
-    for (const auto& w : waveNumber)
+    std::transform(waveNumber.begin(), waveNumber.end(), velocity.begin(),
+        [integrationConst = this->integrationConst]
+        (float w)
+        { 
+            return w * w + 6.0f * integrationConst; 
+        }
+    );
+
+    return velocity;
+}
+
+std::string Plot4::SolitonVelocityStr()
+{
+    std::stringstream ss;
+
+    for (bool isFirst = true; const auto& v : SolitonVelocity())
     {
-        solitonSpeeds.push_back(w * w + 6 * integrationConst);
+        if (isFirst)
+        {
+            isFirst = false;
+        }
+        else
+        {
+            ss << ", ";
+        }
+
+        ss << std::setprecision(2) << std::fixed << std::round(v * 100.0) / 100.0;
     }
 
-    std::vector<float> solitonTravelTimes {};
-    for (int i = 0; i < solitonSpeeds.size(); ++i)
-    {
-        if (solitonSpeeds.at(i) == 0.0)
-            continue;
+    ss << "\n";
 
-        solitonTravelTimes.push_back((xMax - phaseShift.at(i)) / solitonSpeeds.at(i));
+    return ss.str();
+}
+
+float Plot4::SolitonMaxTravelTime()
+{
+    std::vector<float> solitonVelocity = SolitonVelocity();
+    std::vector<float> solitonTravelTimes(GetSolitonCount());
+
+    for (int i = 0; i < solitonVelocity.size(); i++)
+    {
+        float travelDistance {0.0f};
+
+        if (std::abs(solitonVelocity.at(i)) <= 1.0E-6)
+        {
+            continue;
+        }
+        else if (solitonVelocity.at(i) > 0.0f)
+        {
+            travelDistance = static_cast<float>(xMax) - phaseShift.at(i);
+        }
+        else if (solitonVelocity.at(i) < 0.0f)
+        {
+            travelDistance = phaseShift.at(i) - static_cast<float>(xMin);
+        }
+
+        solitonTravelTimes.push_back((travelDistance) / std::abs(solitonVelocity.at(i)));
     }
 
     auto maxTravelTime = std::max_element(begin(solitonTravelTimes), end(solitonTravelTimes));
