@@ -20,6 +20,7 @@ Plot4::Plot4()
     y3.reserve(plotPoints);
     y4.reserve(plotPoints);
     y5.reserve(plotPoints);
+    y6.reserve(plotPoints);
 }
 
 void Plot4::CalculatePlotCoordinates()
@@ -30,6 +31,7 @@ void Plot4::CalculatePlotCoordinates()
     y3.clear();
     y4.clear();
     y5.clear();
+    y6.clear();
 
     plotPoints = std::round(plotPointsPerUnitLength * (xMax - xMin));
     xIncrement = (xMax - xMin) / (plotPoints - 1);
@@ -42,11 +44,24 @@ void Plot4::CalculatePlotCoordinates()
         y2.push_back(SolitonGhost1(x.at(i), time, waveNumber[0], phaseShift[0] + ghostEmpiricalPositionCorrection.at(0)));
         y3.push_back(SolitonGhost2(x.at(i), time, waveNumber[1], phaseShift[1] + ghostEmpiricalPositionCorrection.at(1)));
 
+        double ghostLinearSuperposition = y2.at(i); // one integrationConst is included here
+        ghostLinearSuperposition += y3.at(i) - integrationConst;
+
         if (GetSolitonCount() >= 3)
+        {
             y4.push_back(SolitonGhost2(x.at(i), time, waveNumber[2], phaseShift[2] + ghostEmpiricalPositionCorrection.at(2)));
+            
+            ghostLinearSuperposition += y4.at(i) - integrationConst;
+        }
 
         if (GetSolitonCount() == 4)
+        {
             y5.push_back(SolitonGhost1(x.at(i), time, waveNumber[3], phaseShift[3] + ghostEmpiricalPositionCorrection.at(3)));
+
+            ghostLinearSuperposition += y5.at(i) - integrationConst;
+        }
+
+        y6.push_back(ghostLinearSuperposition);
     }
 
     yMin = integrationConst;
@@ -215,6 +230,12 @@ void Plot4::Graph()
             ImPlot::SetNextLineStyle(ImVec4(1, 10.0/255, 105.0/255, 1), 1.5F);
             ImPlot::PlotLine("Noninteracting soliton \"ghost\" 4", x.data(), y5.data(), plotPoints);
         }
+
+        // ImPlot::SetNextLineStyle(ImVec4(139.0/255, 69.0/255, 19.0/255, 1), 2.0F);
+        // ImPlot::SetNextLineStyle(ImVec4(128.0/255, 128.0/255, 128.0/255, 1), 2.0F);
+        // ImPlot::SetNextLineStyle(ImVec4(56.0/255, 83.0/255, 75.0/255, 1), 2.0F);
+        ImPlot::SetNextLineStyle(ImVec4(25.0/255, 188.0/255, 55.0/255, 1), 2.0F);
+        ImPlot::PlotLine("Hypothetical linear superposition of \"ghost\" solitons", x.data(), y6.data(), plotPoints);
 
         ImPlot::EndPlot();
     }
@@ -458,8 +479,13 @@ float Plot4::SolitonMaxTravelTime()
     {
         float travelDistance {0.0f};
 
-        if (std::abs(solitonVelocity.at(i)) <= 1.0E-6)
+        if (std::abs(solitonVelocity.at(i)) <= 1.0E-6) // i.e. velocity is zero
         {
+            continue;
+        }
+        if (std::abs(solitonVelocity.at(i)) < 0.5)
+        {
+            // exclude snail-pace velocity, it would make the time exceedingly long
             continue;
         }
         else if (solitonVelocity.at(i) > 0.0f)

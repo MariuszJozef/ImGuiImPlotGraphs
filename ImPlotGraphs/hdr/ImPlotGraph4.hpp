@@ -33,8 +33,6 @@ private:
     void CalculatePlotCoordinates() override;
     bool CheckIsNeedReplot() override;
 
-    // auto GenerateXTicksAndXLabels();
-    // auto GenerateYTicksAndYLabels();
     std::pair<std::vector<double>, std::vector<const char*>> GenerateXTicksAndXLabels();
     std::pair<std::vector<double>, std::vector<const char*>> GenerateYTicksAndYLabels();
 
@@ -58,11 +56,12 @@ private:
 
 private:
     std::vector<double> x;
-    std::vector<double> y1;
-    std::vector<double> y2;
-    std::vector<double> y3;
-    std::vector<double> y4;
-    std::vector<double> y5;
+    std::vector<double> y1; // multi-soliton solution
+    std::vector<double> y2; // one-soliton solution: non-interacting ghost of peak one
+    std::vector<double> y3; // one-soliton solution: non-interacting ghost of peak two
+    std::vector<double> y4; // one-soliton solution: non-interacting ghost of peak three
+    std::vector<double> y5; // one-soliton solution: non-interacting ghost of peak four
+    std::vector<double> y6; // linear supperposition of ghosts (to show contrasting behaviour of linear waves)
     
     std::vector<float> waveNumber {2.0f, 1.7f, 1.4f, 1.0f};
     std::vector<float> phaseShift {-35.0f, -25.0f, -15.0f, -7.0f};
