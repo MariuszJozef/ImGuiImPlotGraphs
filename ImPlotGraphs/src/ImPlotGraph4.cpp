@@ -34,30 +34,25 @@ void Plot4::CalculatePlotCoordinates()
     plotPoints = std::round(plotPointsPerUnitLength * (xMax - xMin));
     xIncrement = (xMax - xMin) / (plotPoints - 1);
 
-    // TRIAL AND ERROR CORRECTIONS TO INITIAL POSITION OF GHOST SOLITON
-    float adjust2ndGhostInitialPosition = phaseShift[1] + ghostEmpiricalPositionCorrection.at(0);
-    float adjust3rdGhostInitialPosition = phaseShift[2] + ghostEmpiricalPositionCorrection.at(1);
-    float adjust4thGhostInitialPosition = phaseShift[3] + ghostEmpiricalPositionCorrection.at(2);
-
     for (int i = 0; i < plotPoints; ++i) 
     {
         x.push_back(xMin + i * xIncrement);
         y1.push_back(Soliton(x.at(i), time));
 
-        y2.push_back(SolitonGhost1(x.at(i), time, waveNumber[0], phaseShift[0]));
-        y3.push_back(SolitonGhost2(x.at(i), time, waveNumber[1], adjust2ndGhostInitialPosition));
+        y2.push_back(SolitonGhost1(x.at(i), time, waveNumber[0], phaseShift[0] + ghostEmpiricalPositionCorrection.at(0)));
+        y3.push_back(SolitonGhost2(x.at(i), time, waveNumber[1], phaseShift[1] + ghostEmpiricalPositionCorrection.at(1)));
 
         if (GetSolitonCount() >= 3)
-            y4.push_back(SolitonGhost2(x.at(i), time, waveNumber[2], adjust3rdGhostInitialPosition));
+            y4.push_back(SolitonGhost2(x.at(i), time, waveNumber[2], phaseShift[2] + ghostEmpiricalPositionCorrection.at(2)));
 
         if (GetSolitonCount() == 4)
-            y5.push_back(SolitonGhost1(x.at(i), time, waveNumber[3], adjust4thGhostInitialPosition));
+            y5.push_back(SolitonGhost1(x.at(i), time, waveNumber[3], phaseShift[3] + ghostEmpiricalPositionCorrection.at(3)));
     }
 
-        yMin = integrationConst;
+    yMin = integrationConst;
+
     if (time == 0.0)
     {
-        // yMax = Soliton(phaseShift[0], 0);
         auto max = std::max_element(begin(y1), end(y1));
         yMax = std::ceil(*max);
     }

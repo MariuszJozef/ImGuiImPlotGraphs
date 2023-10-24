@@ -67,11 +67,9 @@ private:
     std::vector<float> waveNumber {2.0f, 1.7f, 1.4f, 1.0f};
     std::vector<float> phaseShift {-35.0f, -25.0f, -15.0f, -7.0f};
     float integrationConst = {-2.0f/3.0f};
-/*
-    TRIAL AND ERROR CORRECTIONS TO INITIAL PEAK LOCATION OF GHOST SOLITONS:
-    the zeroth ghost sits exactly at phaseShift[0] and is not represented in ghostEmpiricalPositionCorrection
-*/
-    std::vector<float> ghostEmpiricalPositionCorrection {3.05f, 5.91f, 8.46f};
+
+    // TRIAL AND ERROR CORRECTIONS TO INITIAL PEAK LOCATION OF GHOST SOLITONS:
+    std::vector<float> ghostEmpiricalPositionCorrection {0.0f, 3.05f, 5.91f, 8.46f};
 
     float time {0.0f};
     double xMin {-40.0};

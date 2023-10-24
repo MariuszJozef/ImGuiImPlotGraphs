@@ -423,28 +423,15 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
                     ImGui::BeginGroup();
                     {
                         ImGui::BeginDisabled();
-                            ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
-                        ImGui::EndDisabled();
-                    }
-                    ImGui::EndGroup();
-
-                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
-                }
-                else if (imPlotFrame->plot4.GetSolitonCount() == 3)
-                {
-                    ImGui::BeginGroup();
-                    {
-                        ImGui::BeginDisabled();
                             ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
                         ImGui::EndDisabled();
                     }
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
-                else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+                else if (imPlotFrame->plot4.GetSolitonCount() == 3)
                 {
                     ImGui::BeginGroup();
                     {
@@ -455,31 +442,44 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
                     ImGui::EndGroup();
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd, 4th \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                }
+                else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+                {
+                    ImGui::BeginGroup();
+                    {
+                        ImGui::BeginDisabled();
+                            ImGui::SliderFloat4("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+                        ImGui::EndDisabled();
+                    }
+                    ImGui::EndGroup();
+
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2, 3\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
             }
             else
             {
                 if (imPlotFrame->plot4.GetSolitonCount() == 2)
                 {
-                    ImGui::SliderFloat("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
-
-                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
-                }
-                else if (imPlotFrame->plot4.GetSolitonCount() == 3)
-                {
                     ImGui::SliderFloat2("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
-                else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+                else if (imPlotFrame->plot4.GetSolitonCount() == 3)
                 {
                     ImGui::SliderFloat3("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
 
                     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                        ImGui::SetTooltip("Empirical correction of initial positions of 2nd, 3rd, 4th \"ghost\" soliton\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
+                }
+                else if (imPlotFrame->plot4.GetSolitonCount() == 4)
+                {
+                    ImGui::SliderFloat4("##label6: GHOST POSITION", imPlotFrame->plot4.GetSetGhostEmpiricalPositionCorrectionViaPtr(), 0.0f, 10.0f, "%.2f");
+
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+                        ImGui::SetTooltip("Empirical correction of \"ghost\"s' initial position, components: 0, 1, 2, 3\n\nShift to align with multi-soliton solution\n\nOnly adjustible at time = 0");
                 }
             }
 
