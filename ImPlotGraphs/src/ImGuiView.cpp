@@ -527,19 +527,6 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
     ImGui::SetNextItemWidth(60);
     ImGui::Checkbox("zoom", imPlotFrame->plot5.SetIsZoomViaPtr());
 
-/*
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(150);
-            ImGui::SliderFloat("##label2: TIME", 
-                imPlotFrame->plot5.SetTimeViaPtr(), 
-                0.0F, 
-                imPlotFrame->plot5.SolitonMaxTravelTime(), 
-                "time = %.1f");
-
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-                ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
-*/
-
     ImGui::SameLine();
     static bool isAnimationPaused {true};
     if (isAnimationPaused)
@@ -553,25 +540,26 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
         {
             isAnimationPaused = !isAnimationPaused;
             imPlotFrame->plot5.SetIsAnimationPaused(isAnimationPaused);
-            // std::cout << "START\n";
         }
 
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
             ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
 
-        std::stringstream formatText;
-        formatText << "time = "
-            << std::setprecision(2) << std::fixed 
-            << imPlotFrame->plot5.GetTime()
-            << " (dimensionless), max time: "
-            << std::setprecision(1) << std::fixed 
-            << imPlotFrame->plot5.SolitonMaxTravelTime();
+        float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
+        ImGui::SameLine(0.0f, spacing);
+        // ImGui::SameLine(0.0f, 10.0f);
+        ImGui::SetNextItemWidth(100);
+        ImGui::SliderFloat("##label2: TIME", 
+            imPlotFrame->plot5.SetTimeViaPtr(), 
+            0.0F, 
+            imPlotFrame->plot5.SolitonMaxTravelTime(), 
+            "time = %.1f");
 
-        // ImGui::SameLine();
-        ImGui::SameLine(0.0f, 20.0f);
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%s", formatText.str().c_str());
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+            ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
 
-        ImGui::SameLine();
+        // ImGui::SameLine(0.0f, 10.0f);
+        ImGui::SameLine(0.0f, spacing);
         ImGui::PushButtonRepeat(true);
         if (ImGui::ArrowButton("##label3: REWIND", ImGuiDir_Left)) 
         {
@@ -581,8 +569,10 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
             ImGui::SetTooltip("Rewind 1 frame (click-hold to repeatedly rewind)");
 
-        float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
+        // float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
         ImGui::SameLine(0.0f, spacing);
+        // ImGui::SameLine(0.0f, 10.0f);
+
         if (ImGui::ArrowButton("##label4: FAST FORWARD", ImGuiDir_Right))
         {
             imPlotFrame->plot5.ForwardOneFrame();
@@ -605,25 +595,26 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
         {
             isAnimationPaused = !isAnimationPaused;
             imPlotFrame->plot5.SetIsAnimationPaused(isAnimationPaused);
-            // std::cout << "STOP\n";
         }
 
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
             ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
 
-        std::stringstream formatText;
-        formatText << "time = "
-            << std::setprecision(2) << std::fixed 
-            << imPlotFrame->plot5.GetTime()
-            << " (dimensionless), max time: "
-            << std::setprecision(1) << std::fixed 
-            << imPlotFrame->plot5.SolitonMaxTravelTime();
+        float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
+        ImGui::SameLine(0.0f, spacing);
+        // ImGui::SameLine(0.0f, 10.0f);
+        ImGui::SetNextItemWidth(100);
+        ImGui::SliderFloat("##label2: TIME", 
+            imPlotFrame->plot5.SetTimeViaPtr(), 
+            0.0F, 
+            imPlotFrame->plot5.SolitonMaxTravelTime(), 
+            "time = %.1f");
 
-        // ImGui::SameLine();
-        ImGui::SameLine(0.0f, 20.0f);
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%s", formatText.str().c_str());
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+            ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
 
-        ImGui::SameLine();
+        // ImGui::SameLine(0.0f, 10.0f);
+        ImGui::SameLine(0.0f, spacing);
         ImGui::PushButtonRepeat(true);
         if (ImGui::ArrowButton("##label5: SLOW DOWN", ImGuiDir_Down))
         {
@@ -633,8 +624,9 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
             ImGui::SetTooltip("Slow down overall animation speedometer = %.2f (arbitrary units; click-hold to repeatedly slow down)", imPlotFrame->plot5.GetTimeIncrement());
 
-        float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
+        // float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
         ImGui::SameLine(0.0f, spacing);
+        // ImGui::SameLine(0.0f, 10.0f);
         if (ImGui::ArrowButton("##label6: SPEED UP", ImGuiDir_Up)) 
         {
             imPlotFrame->plot5.SpeedUpAnimation();
