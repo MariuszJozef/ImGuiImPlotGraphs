@@ -527,13 +527,7 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
     ImGui::SetNextItemWidth(60);
     ImGui::Checkbox("zoom", imPlotFrame->plot5.SetIsZoomViaPtr());
 
-    {
-        static int i = 0;
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(i / 7.0f, 0.5f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
-
+/*
             ImGui::SameLine();
             ImGui::SetNextItemWidth(150);
             ImGui::SliderFloat("##label2: TIME", 
@@ -544,20 +538,38 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
 
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
                 ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
-
-            ImGui::PopStyleColor(4);
-    }
+*/
 
     ImGui::SameLine();
     static bool isAnimationPaused {true};
     if (isAnimationPaused)
     {
-        // if (ImGui::Button(buttonText.c_str()))
-        if (ImGui::Button("Start"))
+        static int i = 0;
+        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
+
+        if (ImGui::Button("start"))
         {
             isAnimationPaused = !isAnimationPaused;
             imPlotFrame->plot5.SetIsAnimationPaused(isAnimationPaused);
+            // std::cout << "START\n";
         }
+
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+            ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
+
+        std::stringstream formatText;
+        formatText << "time = "
+            << std::setprecision(2) << std::fixed 
+            << imPlotFrame->plot5.GetTime()
+            << " (dimensionless), max time: "
+            << std::setprecision(1) << std::fixed 
+            << imPlotFrame->plot5.SolitonMaxTravelTime();
+
+        // ImGui::SameLine();
+        ImGui::SameLine(0.0f, 20.0f);
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%s", formatText.str().c_str());
 
         ImGui::SameLine();
         ImGui::PushButtonRepeat(true);
@@ -579,14 +591,37 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
         ImGui::PopButtonRepeat();
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
             ImGui::SetTooltip("Forward 1 frame (click-hold to repeatedly forward)");
+
+        ImGui::PopStyleColor(3);
     }
     else 
     {
-        if (ImGui::Button("Stop"))
+        static int i = 0;
+        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
+
+        if (ImGui::Button("stop"))
         {
             isAnimationPaused = !isAnimationPaused;
             imPlotFrame->plot5.SetIsAnimationPaused(isAnimationPaused);
+            // std::cout << "STOP\n";
         }
+
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+            ImGui::SetTooltip("time (dimensionless)\n\nmax time: %.1f\t(proportional to distance to edge of slowest peak)", imPlotFrame->plot5.SolitonMaxTravelTime());
+
+        std::stringstream formatText;
+        formatText << "time = "
+            << std::setprecision(2) << std::fixed 
+            << imPlotFrame->plot5.GetTime()
+            << " (dimensionless), max time: "
+            << std::setprecision(1) << std::fixed 
+            << imPlotFrame->plot5.SolitonMaxTravelTime();
+
+        // ImGui::SameLine();
+        ImGui::SameLine(0.0f, 20.0f);
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%s", formatText.str().c_str());
 
         ImGui::SameLine();
         ImGui::PushButtonRepeat(true);
@@ -608,6 +643,8 @@ void ImGuiView::DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame)
         ImGui::PopButtonRepeat();
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
             ImGui::SetTooltip("Speed up overall animation speedometer = %.2f (arbitrary units; click-hold to repeatedly speed up)", imPlotFrame->plot5.GetTimeIncrement());
+
+        ImGui::PopStyleColor(3);
     }
 
     ImGui::SameLine();

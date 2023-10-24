@@ -82,7 +82,7 @@ private:
 
     float time {0.0f};
     float timeIncrement {0.05};
-    bool isAnimationPaused {false};
+    bool isAnimationPaused {true};
     double xMin {-40.0};
     double xMax {-xMin};
     double yMin {integrationConst};
