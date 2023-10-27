@@ -183,7 +183,7 @@ void Plot4::Graph()
         ImPlot::SetupAxis(ImAxis_X1, "x axis (dimensionless - no units)");
         ImPlot::SetupAxis(ImAxis_Y1, "y axis (dimensionless - no units)");
 
-        double extraForLegend = yMax + 0.5;
+        double extraForLegend = yMax + 1;
 
         if (isZoom)
         {
@@ -229,13 +229,23 @@ void Plot4::Graph()
             ImPlot::PlotLine("Noninteracting soliton \"ghost\" 4", x.data(), y5.data(), plotPoints);
         }
 
-        // ImPlot::SetNextLineStyle(ImVec4(139.0/255, 69.0/255, 19.0/255, 1), 2.0F);
-        // ImPlot::SetNextLineStyle(ImVec4(128.0/255, 128.0/255, 128.0/255, 1), 2.0F);
-        // ImPlot::SetNextLineStyle(ImVec4(56.0/255, 83.0/255, 75.0/255, 1), 2.0F);
         ImPlot::SetNextLineStyle(ImVec4(25.0/255, 188.0/255, 55.0/255, 1), 2.0F);
         ImPlot::PlotLine("Fictitious linear superposition of \"ghost\" solitons", x.data(), y6.data(), plotPoints);
 
         ImPlot::EndPlot();
+    }
+
+    AdvanceOrRepeatAnimation();
+}
+
+void Plot4::AdvanceOrRepeatAnimation()
+{
+    if (!isAnimationPaused)
+        ForwardOneFrame();
+
+    if (time > SolitonMaxTravelTime())
+    {
+        time = 0.0f; // repeat animation
     }
 }
 
@@ -480,9 +490,7 @@ std::string Plot4::SolitonVelocityStr()
         ss << std::setprecision(2) << std::fixed << std::round(v * 100.0) / 100.0;
     }
 
-    ss << "\n";
-
-    return ss.str();
+    return ss.str(); // no "\n"
 }
 
 float Plot4::SolitonMaxTravelTime()

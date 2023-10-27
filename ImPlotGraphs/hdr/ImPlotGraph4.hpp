@@ -13,6 +13,7 @@ public:
 
     float* SetTimeViaPtr() { return &time; }
     float GetTime() const { return time; }
+    float GetTimeIncrement() { return timeIncrement; }
     float* SetWaveNumberViaPtr() { return waveNumber.data(); }
     std::pair<float, float> GetWaveNumberMinMax() const { return std::make_pair(0.4f, 2.8f); }
     float* SetPhaseShiftViaPtr() { return phaseShift.data(); }
@@ -28,6 +29,12 @@ public:
     std::vector<float> SolitonVelocity();
     std::string SolitonVelocityStr();
     float SolitonMaxTravelTime();
+
+    void SetIsAnimationPaused(bool isAnimationPaused) { this->isAnimationPaused = isAnimationPaused; }
+    void RewindOneFrame() { time -= timeIncrement; }
+    void ForwardOneFrame() { time += timeIncrement; }
+    void SpeedUpAnimation() { if (timeIncrement < 0.2) timeIncrement += 0.01; }
+    void SlowDownAnimation() { if (timeIncrement > 0.01) timeIncrement -= 0.01; }
 
 private:
     void CalculatePlotCoordinates() override;
@@ -54,6 +61,8 @@ private:
     double SingleSolitonGhost(double x, double t, double waveNumber_, double phaseShift_);
     double GhostSuperposition(double x, double t);
 
+    void AdvanceOrRepeatAnimation();
+
 private:
     std::vector<double> x;
     std::vector<double> y1; // multi-soliton solution
@@ -63,15 +72,17 @@ private:
     std::vector<double> y5; // one-soliton solution: non-interacting ghost of peak four
     std::vector<double> y6; // linear supperposition of ghosts (to show contrasting behaviour of linear waves)
     
-    std::vector<float> waveNumber {2.0f, 1.7f, 1.4f, 1.0f};
-    std::vector<float> phaseShift {-35.0f, -25.0f, -15.0f, -7.0f};
+    std::vector<float> waveNumber {2.2f, 2.1f, 1.9f, 1.8f};
+    std::vector<float> phaseShift {-20.0f, -15.0f, 2.0f, 10.0f};
     float integrationConst = {-2.0f/3.0f};
 
     // TRIAL AND ERROR CORRECTIONS TO INITIAL PEAK LOCATION OF GHOST SOLITONS:
     std::vector<float> ghostEmpiricalPositionCorrection {0.0f, 3.05f, 5.91f, 8.46f};
 
     float time {0.0f};
-    double xMin {-40.0};
+    float timeIncrement {0.05};
+    bool isAnimationPaused {true};
+    double xMin {-30.0};
     double xMax {-xMin};
     double yMin {integrationConst};
     double yMax {MultiSoliton(phaseShift[0], 0)};

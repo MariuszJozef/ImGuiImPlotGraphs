@@ -54,7 +54,7 @@ private:
             "[xMin, xMax] = [-4PI, 4PI]",
             "[xMin, xMax] = [-5PI, 5PI]"
         };
-    int selectedXAxisDomain {0};
+    int selectedXAxisDomain {3};
     double xMin {0.0};
     double xMax {2 * std::numbers::pi};
     double yMin {0.0};
