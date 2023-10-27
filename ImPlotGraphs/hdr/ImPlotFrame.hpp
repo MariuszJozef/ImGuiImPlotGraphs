@@ -3,7 +3,6 @@
 #include "ImPlotGraph2.hpp"
 #include "ImPlotGraph3.hpp"
 #include "ImPlotGraph4.hpp"
-#include "ImPlotGraph5.hpp"
 
 namespace Code::ImGuiImPlot
 {
@@ -23,7 +22,6 @@ public:
     Plot2 plot2;
     Plot3 plot3;
     Plot4 plot4;
-    Plot5 plot5;
 };
 
 } // ~namespace Code::ImGuiImPlot

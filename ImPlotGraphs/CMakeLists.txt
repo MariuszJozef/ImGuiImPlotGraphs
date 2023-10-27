@@ -36,8 +36,6 @@ target_sources(targetExe
         src/ImPlotGraph3.cpp
         hdr/ImPlotGraph4.hpp
         src/ImPlotGraph4.cpp
-        hdr/ImPlotGraph5.hpp
-        src/ImPlotGraph5.cpp
 # GLAD
         ../External/glad4.1/src/glad.c
 # IMGUI

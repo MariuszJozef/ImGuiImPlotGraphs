@@ -22,7 +22,6 @@ private:
     void DrawSubView1ForPlot2(ImPlotFrame* imPlotFrame);
     void DrawSubView1ForPlot3(ImPlotFrame* imPlotFrame);
     void DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame);
-    void DrawSubView1ForPlot5(ImPlotFrame* imPlotFrame);
 
     void DrawSettingsView2();
     
