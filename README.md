@@ -2,13 +2,12 @@
 
 This demo exemplifies how to use ImPlot (in conjunction with ImGui and SDL2 backend) to plot interactive graphs in a C++ program.
 
-For a beginners example of how to use in a C++ project just ImGui without ImPlot, please refer to:
-[SDLImGuiTriangle](https://github.com/MariuszJozef/SDLImGuiTriangle.git).
-
 ```
 git clone --depth 1 https://github.com/MariuszJozef/ImGuiImPlotGraphs.git
 cd ImGuiImPlotGraphs
 ```
+
+If SDL2 is installed, provide a path to SDL2Config.cmake via `SDL2_DIR` as below (without square brackets); otherwise leave this flag off and SDL2 will be downloaded and built with the project.
 
 ```
 cmake --preset Make-Gnu-Debug [ -D SDL2_DIR=/path/to/SDL2Config.cmake/ ]
@@ -35,23 +34,28 @@ cmake --build --preset Make-Msvc-Debug --target run
 
 ## Fourier transform pairs
 
-![ScreenShot1](ScreenShots/ScreenShot2a.png)
-![ScreenShot1](ScreenShots/ScreenShot2b.png)
-![ScreenShot1](ScreenShots/ScreenShot2c.png)
+![ScreenShot2a](ScreenShots/ScreenShot2a.png)
+![ScreenShot2b](ScreenShots/ScreenShot2b.png)
+![ScreenShot2c](ScreenShots/ScreenShot2c.png)
 
 ## Collision animations of KdV solitons
 
-![ScreenShot1](ScreenShots/ScreenShot4a.mp4)
-![ScreenShot1](ScreenShots/ScreenShot4b.mp4)
+![ScreenCast4a](ScreenShots/ScreenCast4a.gif)
+![ScreenCast4b](ScreenShots/ScreenCast4b.gif)
 
 ## Multi-slit diffraction and interference of light
 
-![ScreenShot1](ScreenShots/ScreenShot3a.png)
-![ScreenShot1](ScreenShots/ScreenShot3b.png)
-![ScreenShot1](ScreenShots/ScreenShot3c.png)
-![ScreenShot1](ScreenShots/ScreenShot3d.png)
-![ScreenShot1](ScreenShots/ScreenShot3e.png)
+![ScreenShot3a](ScreenShots/ScreenShot3a.png)
+![ScreenShot3b](ScreenShots/ScreenShot3b.png)
+![ScreenShot3c](ScreenShots/ScreenShot3c.png)
+![ScreenShot3d](ScreenShots/ScreenShot3d.png)
+![ScreenShot3e](ScreenShots/ScreenShot3e.png)
 
 ## A sinusoid with adjustible parameters
 
-![ScreenShot2](ScreenShots/ScreenShot1.png)
+![ScreenShot1](ScreenShots/ScreenShot1.png)
+
+
+For a beginners example of how to use (in a C++ project) just ImGui without ImPlot, please refer to:
+[SDLImGuiTriangle](https://github.com/MariuszJozef/SDLImGuiTriangle.git).
+Other (CMake) ways to build the project are described there.

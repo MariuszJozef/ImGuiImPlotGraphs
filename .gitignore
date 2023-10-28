@@ -6,3 +6,4 @@ External/**/
 
 # Ignore files
 ImPlotGraphs/**/imgui.ini
+ScreenShots/*.mp4
