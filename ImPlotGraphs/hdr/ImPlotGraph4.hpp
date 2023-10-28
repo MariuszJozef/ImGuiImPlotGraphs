@@ -77,7 +77,7 @@ private:
     float integrationConst = {-2.0f/3.0f};
 
     // TRIAL AND ERROR CORRECTIONS TO INITIAL PEAK LOCATION OF GHOST SOLITONS:
-    std::vector<float> ghostEmpiricalPositionCorrection {0.0f, 3.05f, 5.91f, 8.46f};
+    std::vector<float> ghostEmpiricalPositionCorrection {0.0f, 3.6f, 5.9f, 9.425f};
 
     float time {0.0f};
     float timeIncrement {0.05};

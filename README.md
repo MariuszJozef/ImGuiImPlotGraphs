@@ -33,3 +33,25 @@ cmake --build --preset Make-Msvc-Debug --target run
 - On Windows 11 it is preferable to issue the commands from **"Developer Command Prompt for VS 2022"** instead of regular PowerShell or CMD because the former has predefined Visual Studio environment variables which enable compilation with VS compiler.
 - If nevertheless using PowerShell/CMD, or on Windows 10, one must first run some appropriate *.bat scripts that define VS environment variables.
 
+## Fourier transform pairs
+
+![ScreenShot1](ScreenShots/ScreenShot2a.png)
+![ScreenShot1](ScreenShots/ScreenShot2b.png)
+![ScreenShot1](ScreenShots/ScreenShot2c.png)
+
+## Collision animations of KdV solitons
+
+![ScreenShot1](ScreenShots/ScreenShot4a.mp4)
+![ScreenShot1](ScreenShots/ScreenShot4b.mp4)
+
+## Multi-slit diffraction and interference of light
+
+![ScreenShot1](ScreenShots/ScreenShot3a.png)
+![ScreenShot1](ScreenShots/ScreenShot3b.png)
+![ScreenShot1](ScreenShots/ScreenShot3c.png)
+![ScreenShot1](ScreenShots/ScreenShot3d.png)
+![ScreenShot1](ScreenShots/ScreenShot3e.png)
+
+## A sinusoid with adjustible parameters
+
+![ScreenShot2](ScreenShots/ScreenShot1.png)
