@@ -23,8 +23,8 @@ cmake --build --preset Make-Clang-Debug --target run
 
 ```
 cmake --preset NMake-Msvc-Debug [ -D SDL2_DIR=/path/to/SDL2Config.cmake/ ]
-cmake --build --preset Make-Msvc-Debug
-cmake --build --preset Make-Msvc-Debug --target run
+cmake --build --preset NMake-Msvc-Debug
+cmake --build --preset NMake-Msvc-Debug --target run
 ```
 
 **N.B.**
