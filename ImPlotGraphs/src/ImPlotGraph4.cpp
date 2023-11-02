@@ -138,6 +138,24 @@ bool Plot4::CheckIsNeedReplot()
             isAnimationPaused = true;
             time = 0.0f;
         }
+        else if (selectedSolitonComboItem == 3)
+        {
+            waveNumber[0] = 2.1f;
+            waveNumber[1] = 2.0f;
+            waveNumber[2] = 1.8f;
+            phaseShift[0] = -15.0f;
+            phaseShift[1] = -3.0f;
+            phaseShift[2] = 10.0f;
+            ghostEmpiricalPositionCorrection[0] = 0.0f;
+            ghostEmpiricalPositionCorrection[1] = 3.7;
+            ghostEmpiricalPositionCorrection[2] = 6.125;
+            xMin = -20;
+            xMax = -xMin;
+            auto max = std::max_element(begin(y1), end(y1));
+            yMax = std::ceil(*max);
+            isAnimationPaused = true;
+            time = 0.0f;
+        }
         else
         {
             waveNumber = waveNumberOld;

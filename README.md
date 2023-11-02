@@ -34,15 +34,29 @@ cmake --build --preset NMake-Msvc-Debug --target run
 
 ## Fourier transform pairs
 
-![ScreenShot2a](ScreenShots/ScreenShot2a.png)
-![ScreenShot2b](ScreenShots/ScreenShot2b.png)
-![ScreenShot2c](ScreenShots/ScreenShot2c.png)
+<!-- ![ScreenShot2a](ScreenShots/ScreenShot2a.png) -->
+<!-- ![ScreenShot2b](ScreenShots/ScreenShot2b.png) -->
+<!-- ![ScreenShot2c](ScreenShots/ScreenShot2c.png) -->
 ![ScreenCast2](ScreenShots/ScreenCast2.gif)
 
 ## Collision animations of KdV solitons
 
+### Two-soliton merge-split collision
+
 ![ScreenCast4a](ScreenShots/ScreenCast4a.gif)
+
+### Two-soliton bounce-exchange collision
+
 ![ScreenCast4b](ScreenShots/ScreenCast4b.gif)
+
+# Three-soliton collision (middle one stationary)
+
+![ScreenCast4c](ScreenShots/ScreenCast4c.gif)
+
+# Four-soliton collision
+
+![ScreenCast4d](ScreenShots/ScreenCast4d.gif)
+![ScreenCast4e](ScreenShots/ScreenCast4e.gif)
 
 ## Multi-slit diffraction and interference of light
 
@@ -55,7 +69,7 @@ cmake --build --preset NMake-Msvc-Debug --target run
 
 ## A sinusoid with adjustible parameters
 
-![ScreenShot1](ScreenShots/ScreenShot1.png)
+<!-- ![ScreenShot1](ScreenShots/ScreenShot1.png) -->
 ![ScreenCast1](ScreenShots/ScreenCast1.gif)
 
 For a beginners example of how to use (in a C++ project) just ImGui without ImPlot, please refer to:
