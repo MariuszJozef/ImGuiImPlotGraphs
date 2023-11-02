@@ -237,13 +237,13 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
 
     float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
     ImGui::SameLine();
-    static bool sIsAnimationPaused {true};
-    if (sIsAnimationPaused)
+    if (imPlotFrame->plot4.GetIsAnimationPaused())
     {
         if (ImGui::Button("start"))
         {
-            sIsAnimationPaused = !sIsAnimationPaused;
-            imPlotFrame->plot4.SetIsAnimationPaused(sIsAnimationPaused);
+            imPlotFrame->plot4.SetIsAnimationPaused(
+                !imPlotFrame->plot4.GetIsAnimationPaused()
+            );
         }
         
         ImGui::PushButtonRepeat(true);
@@ -270,8 +270,9 @@ void ImGuiView::DrawSubView1ForPlot4(ImPlotFrame* imPlotFrame)
     {
         if (ImGui::Button("stop"))
         {
-            sIsAnimationPaused = !sIsAnimationPaused;
-            imPlotFrame->plot4.SetIsAnimationPaused(sIsAnimationPaused);
+            imPlotFrame->plot4.SetIsAnimationPaused(
+                !imPlotFrame->plot4.GetIsAnimationPaused()
+            );
         }
 
         ImGui::SameLine(0.0f, spacing);

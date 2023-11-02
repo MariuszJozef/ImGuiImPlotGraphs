@@ -120,6 +120,7 @@ bool Plot4::CheckIsNeedReplot()
             xMax = -xMin;
             auto max = std::max_element(begin(y1), end(y1));
             yMax = std::ceil(*max);
+            isAnimationPaused = true;
             time = 0.0f;
         }
         else if (selectedSolitonComboItem == 2)
@@ -134,6 +135,7 @@ bool Plot4::CheckIsNeedReplot()
             xMax = -xMin;
             auto max = std::max_element(begin(y1), end(y1));
             yMax = std::ceil(*max);
+            isAnimationPaused = true;
             time = 0.0f;
         }
         else

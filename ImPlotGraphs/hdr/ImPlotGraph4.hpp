@@ -30,6 +30,7 @@ public:
     std::string SolitonVelocityStr();
     float SolitonMaxTravelTime();
 
+    bool GetIsAnimationPaused() const { return isAnimationPaused; }
     void SetIsAnimationPaused(bool isAnimationPaused) { this->isAnimationPaused = isAnimationPaused; }
     void RewindOneFrame() { time -= timeIncrement; }
     void ForwardOneFrame() { time += timeIncrement; }
