@@ -66,7 +66,7 @@ private:
     float xShift {0.0F};
     float yShift {0.0F};
     bool isMarkers {false};
-    int selectedPlotColour {0};
+    int selectedPlotColour {3};
 
     std::map<int, std::pair<std::string, ImVec4>> plotColour 
         {

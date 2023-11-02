@@ -37,6 +37,7 @@ cmake --build --preset NMake-Msvc-Debug --target run
 ![ScreenShot2a](ScreenShots/ScreenShot2a.png)
 ![ScreenShot2b](ScreenShots/ScreenShot2b.png)
 ![ScreenShot2c](ScreenShots/ScreenShot2c.png)
+![ScreenCast2](ScreenShots/ScreenCast2.gif)
 
 ## Collision animations of KdV solitons
 
@@ -50,11 +51,12 @@ cmake --build --preset NMake-Msvc-Debug --target run
 ![ScreenShot3c](ScreenShots/ScreenShot3c.png)
 ![ScreenShot3d](ScreenShots/ScreenShot3d.png)
 ![ScreenShot3e](ScreenShots/ScreenShot3e.png)
+![ScreenCast3](ScreenShots/ScreenCast3.gif)
 
 ## A sinusoid with adjustible parameters
 
 ![ScreenShot1](ScreenShots/ScreenShot1.png)
-
+![ScreenCast1](ScreenShots/ScreenCast1.gif)
 
 For a beginners example of how to use (in a C++ project) just ImGui without ImPlot, please refer to:
 [SDLImGuiTriangle](https://github.com/MariuszJozef/SDLImGuiTriangle.git).

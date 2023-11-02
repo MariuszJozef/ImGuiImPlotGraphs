@@ -25,7 +25,7 @@ public:
     const char * const * GetSolitonStartOfComboList() { return solitonComboDescription.data(); }
     int GetSolitonComboDescriptionSize() { return solitonComboDescription.size(); }
 
-    unsigned long GetSolitonCount() const { return selectedSolitonComboItem + 2ul; }
+    unsigned long GetSolitonCount() const;
     std::vector<float> SolitonVelocity();
     std::string SolitonVelocityStr();
     float SolitonMaxTravelTime();
@@ -33,7 +33,7 @@ public:
     void SetIsAnimationPaused(bool isAnimationPaused) { this->isAnimationPaused = isAnimationPaused; }
     void RewindOneFrame() { time -= timeIncrement; }
     void ForwardOneFrame() { time += timeIncrement; }
-    void SpeedUpAnimation() { if (timeIncrement < 0.2) timeIncrement += 0.01; }
+    void SpeedUpAnimation() { if (timeIncrement < 0.4) timeIncrement += 0.01; }
     void SlowDownAnimation() { if (timeIncrement > 0.01) timeIncrement -= 0.01; }
 
 private:
@@ -80,15 +80,17 @@ private:
     std::vector<float> ghostEmpiricalPositionCorrection {0.0f, 3.6f, 5.9f, 9.425f};
 
     float time {0.0f};
-    float timeIncrement {0.05};
+    float timeIncrement {0.1};
     bool isAnimationPaused {true};
     double xMin {-30.0};
     double xMax {-xMin};
     double yMin {integrationConst};
     double yMax {MultiSoliton(phaseShift[0], 0)};
-    int selectedSolitonComboItem {2};
+    int selectedSolitonComboItem {4};
     std::vector<const char*> solitonComboDescription {
         "two solitons",
+        "two solitons: merge-split collision",
+        "two solitons: bounce-exchange collision",
         "three solitons",
         "four solitons"
     };

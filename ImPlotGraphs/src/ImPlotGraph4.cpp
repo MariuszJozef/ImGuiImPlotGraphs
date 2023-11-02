@@ -107,6 +107,47 @@ bool Plot4::CheckIsNeedReplot()
     else if (selectedSolitonComboItemOld != selectedSolitonComboItem)
     {
         selectedSolitonComboItemOld = selectedSolitonComboItem;
+
+        if (selectedSolitonComboItem == 1)
+        {
+            waveNumber[0] = 2.4f;
+            waveNumber[1] = 1.4f;
+            phaseShift[0] = -15.0f;
+            phaseShift[1] = 10.0f;
+            ghostEmpiricalPositionCorrection[0] = 0.0f;
+            ghostEmpiricalPositionCorrection[1] = 1.95f;
+            xMin = -20;
+            xMax = -xMin;
+            auto max = std::max_element(begin(y1), end(y1));
+            yMax = std::ceil(*max);
+            time = 0.0f;
+        }
+        else if (selectedSolitonComboItem == 2)
+        {
+            waveNumber[0] = 2.1f;
+            waveNumber[1] = 1.8f;
+            phaseShift[0] = -15.0f;
+            phaseShift[1] = 10.0f;
+            ghostEmpiricalPositionCorrection[0] = 0.0f;
+            ghostEmpiricalPositionCorrection[1] = 2.9f;
+            xMin = -20;
+            xMax = -xMin;
+            auto max = std::max_element(begin(y1), end(y1));
+            yMax = std::ceil(*max);
+            time = 0.0f;
+        }
+        else
+        {
+            waveNumber = waveNumberOld;
+            phaseShift = phaseShiftOld;
+            ghostEmpiricalPositionCorrection = ghostEmpiricalPositionCorrectionOld;
+            xMin = -30;
+            xMax = -xMin;
+            auto max = std::max_element(begin(y1), end(y1));
+            yMax = std::ceil(*max);
+            time = timeOld;
+        }
+
         isNeedReplot = true;
     }
     else if (integrationConstOld != integrationConst)
@@ -446,7 +487,7 @@ double Plot4::GhostSuperposition(double x, double t)
 {
     double superposition {integrationConst}; // add integrationConst just once!
 
-    for (int i = 0; i < GetSolitonCount(); i++)
+    for (long unsigned i = 0; i < GetSolitonCount(); i++)
     {
         superposition += SingleSolitonGhost(x, t, 
             waveNumber[i], 
@@ -455,6 +496,23 @@ double Plot4::GhostSuperposition(double x, double t)
     }
 
     return superposition;
+}
+
+unsigned long Plot4::GetSolitonCount() const 
+{
+    switch (selectedSolitonComboItem)
+    {
+    case 0:
+    case 1:
+    case 2:
+        return 2ul;
+    case 3:
+        return 3ul;
+    case 4:
+        return 4ul;
+    default:
+        return 4ul;
+    }
 }
 
 std::vector<float> Plot4::SolitonVelocity()
@@ -498,7 +556,7 @@ float Plot4::SolitonMaxTravelTime()
     std::vector<float> solitonVelocity = SolitonVelocity();
     std::vector<float> solitonTravelTimes(GetSolitonCount());
 
-    for (int i = 0; i < solitonVelocity.size(); i++)
+    for (long unsigned i = 0; i < solitonVelocity.size(); i++)
     {
         float travelDistance {0.0f};
 
