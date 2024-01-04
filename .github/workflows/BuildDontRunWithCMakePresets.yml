@@ -1,0 +1,309 @@
+name: Build with CMakePresets.json but do not run because Github Action cannot stop the GUI
+
+on:
+  push: 
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+env:
+  SDL_VERSION: 2.28.5
+  
+jobs:
+  singleConfig:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        preset:
+        # single config generators
+          - Ninja-Msvc-Debug
+          - Ninja-Msvc-Release
+          - Ninja-Gnu-Debug
+          - Ninja-Gnu-Release
+          - Ninja-Clang-Debug
+          - Ninja-Clang-Release
+          - NMake-Msvc-Debug
+          - NMake-Msvc-Release
+          - Make-Gnu-Debug
+          - Make-Gnu-Release
+          - Make-Clang-Debug
+          - Make-Clang-Release
+
+        exclude:
+          - os: ubuntu-latest
+            preset: Ninja-Msvc-Debug
+          - os: ubuntu-latest
+            preset: Ninja-Msvc-Release
+          - os: ubuntu-latest
+            preset: NMake-Msvc-Debug
+          - os: ubuntu-latest
+            preset: NMake-Msvc-Release
+
+          - os: macos-latest
+            preset: Ninja-Gnu-Debug
+          - os: macos-latest
+            preset: Ninja-Gnu-Release
+          - os: macos-latest
+            preset: Ninja-Msvc-Debug
+          - os: macos-latest
+            preset: Ninja-Msvc-Release
+          - os: macos-latest
+            preset: NMake-Msvc-Debug
+          - os: macos-latest
+            preset: NMake-Msvc-Release
+          - os: macos-latest
+            preset: NMake-Gnu-Debug
+          - os: macos-latest
+            preset: NMake-Gnu-Release
+
+          - os: windows-latest
+            preset: Ninja-Gnu-Debug
+          - os: windows-latest
+            preset: Ninja-Gnu-Release
+          - os: windows-latest
+            preset: Ninja-Clang-Debug
+          - os: windows-latest
+            preset: Ninja-Clang-Release
+          - os: windows-latest
+            preset: Make-Gnu-Debug
+          - os: windows-latest
+            preset: Make-Gnu-Release
+          - os: windows-latest
+            preset: Make-Clang-Debug
+          - os: windows-latest
+            preset: Make-Clang-Release
+        
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+        
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Setup MSVC compiler
+      if: ${{matrix.os == 'windows-latest'}}
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: MSVC compiler version
+      if: ${{matrix.os == 'windows-latest'}}
+      shell: bash
+      run: |
+        echo cl
+        cl
+
+    - name: Install SDL (Linux)
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      run: sudo apt-get install libsdl2-dev
+
+    - name: Install SDL (Macos)
+      if: ${{matrix.os == 'macos-latest'}}
+      run: brew install sdl2
+
+    - name: Install SDL (Windows)
+      if: ${{matrix.os == 'windows-latest'}}
+      run: |
+        Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
+        Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
+
+    - name: Show location of installed SDL (Linux)
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      run: |
+        find /usr -iname SDL.h
+        find /usr -iname libSDL2.a
+        find /usr -iname libSDL2.so
+        find /usr -iname SDL2?Config.cmake
+
+    - name: Show location of installed SDL (MacOS)
+      if: ${{matrix.os == 'macos-latest'}}
+      run: |
+        find /usr/local/Cellar/sdl2 -iname SDL.h
+        find /usr/local/Cellar/sdl2 -iname libSDL2.a
+        find /usr/local/Cellar/sdl2 -iname libSDL2.so
+        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+
+    - name: Show location of installed SDL (Windows)
+      if: ${{matrix.os == 'windows-latest'}}
+      shell: powershell
+      run: |
+        ls C:\SDL2 -Include SDL.h -Recurse -Name
+        ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+
+    - name: Tool versions
+      shell: bash
+      run: | 
+        echo g++ --version
+        g++ --version
+        echo 
+        echo clang++ --version
+        clang++ --version
+        echo 
+        echo cmake --version
+        cmake --version
+        echo 
+        echo ninja --version
+        ninja --version
+
+    - name: Parameter values
+      shell: bash
+      run: | 
+        echo platform = ${{runner.os}}
+        echo preset = ${{matrix.preset}}
+
+    - name: CMake configure
+      run: cmake --preset ${{matrix.preset}}
+      
+    - name: CMake build
+      run: cmake --build --preset ${{matrix.preset}}
+
+#====================
+# Comment out because Github Action will launch the GUI but will not be able to stop it
+#====================
+    # - name: CMake run program
+    #   run: cmake --build --preset ${{matrix.preset}} --target run
+
+
+  multiConfig:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        preset:
+        # multi config generators
+          - NinjaMC-Msvc
+          - NinjaMC-Gnu
+          - NinjaMC-Clang
+          - VSx32-Msvc
+          - VSx64-Msvc
+          - Xcode-Clang
+        build_type: [Debug, Release]
+
+        exclude:
+          - os: ubuntu-latest
+            preset: NinjaMC-Msvc
+          - os: ubuntu-latest
+            preset: VSx32-Msvc
+          - os: ubuntu-latest
+            preset: VSx64-Msvc
+          - os: ubuntu-latest
+            preset: Xcode-Clang
+            
+          - os: macos-latest
+            preset: NinjaMC-Gnu
+          - os: macos-latest
+            preset: NinjaMC-Msvc
+          - os: macos-latest
+            preset: NMake-Msvc
+          - os: macos-latest
+            preset: Make-Gnu
+          - os: macos-latest
+            preset: VSx32-Msvc
+          - os: macos-latest
+            preset: VSx64-Msvc
+
+          - os: windows-latest
+            preset: NinjaMC-Gnu
+          - os: windows-latest
+            preset: NinjaMC-Clang
+          - os: windows-latest
+            preset: Make-Gnu
+          - os: windows-latest
+            preset: Make-Clang
+          - os: windows-latest
+            preset: Xcode-Clang
+        
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+        
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Setup MSVC compiler
+      if: ${{matrix.os == 'windows-latest'}}
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: MSVC compiler version
+      if: ${{matrix.os == 'windows-latest'}}
+      shell: bash
+      run: |
+        echo cl
+        cl
+
+    - name: Install SDL (Linux)
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      run: sudo apt-get install libsdl2-dev
+
+    - name: Install SDL (Macos)
+      if: ${{matrix.os == 'macos-latest'}}
+      run: brew install sdl2
+
+    - name: Install SDL (Windows)
+      if: ${{matrix.os == 'windows-latest'}}
+      run: |
+        Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
+        Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
+
+    - name: Show location of installed SDL (Linux)
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      run: |
+        find /usr -iname SDL.h
+        find /usr -iname libSDL2.a
+        find /usr -iname libSDL2.so
+        find /usr -iname SDL2?Config.cmake
+
+    - name: Show location of installed SDL (MacOS)
+      if: ${{matrix.os == 'macos-latest'}}
+      run: |
+        find /usr/local/Cellar/sdl2 -iname SDL.h
+        find /usr/local/Cellar/sdl2 -iname libSDL2.a
+        find /usr/local/Cellar/sdl2 -iname libSDL2.so
+        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+
+    - name: Show location of installed SDL (Windows)
+      if: ${{matrix.os == 'windows-latest'}}
+      shell: powershell
+      run: |
+        ls C:\SDL2 -Include SDL.h -Recurse -Name
+        ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+
+    - name: Tool versions
+      shell: bash
+      run: | 
+        echo g++ --version
+        g++ --version
+        echo 
+        echo clang++ --version
+        clang++ --version
+        echo 
+        echo cmake --version
+        cmake --version
+        echo 
+        echo ninja --version
+        ninja --version
+
+    - name: Parameter values
+      shell: bash
+      run: | 
+        echo platform = ${{runner.os}}
+        echo preset = ${{matrix.preset}}
+
+    - name: CMake configure
+      run: cmake --preset ${{matrix.preset}}
+      
+    - name: CMake build
+      run: cmake --build --preset ${{matrix.preset}} --config ${{matrix.build_type}}
+
+#====================
+# Comment out because Github Action will launch the GUI but will not be able to stop it
+#====================
+    # - name: CMake run program
+    #   run: cmake --build --preset ${{matrix.preset}} --config ${{matrix.build_type}} --target run
