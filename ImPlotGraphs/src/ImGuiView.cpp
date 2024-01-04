@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+#include <cmath>
 #include "imgui.h"
 #include "ImGuiView.hpp"
 #include "ImGuiFonts.hpp"
