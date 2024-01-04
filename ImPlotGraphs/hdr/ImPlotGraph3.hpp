@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <cmath>
-#include <numeric>
+#include <cmath>
 #include <map>
 #include <tuple>
 #include <string>
@@ -50,7 +50,7 @@ private:
     float screenPerpDistanceMm {500.0F};
     const double maxAngleToObservationPointDeg {2.0};
 
-    double xMax {screenPerpDistanceMm * tanf(std::numbers::pi / 180 * maxAngleToObservationPointDeg)};
+    double xMax {screenPerpDistanceMm * tanf(M_PI / 180 * maxAngleToObservationPointDeg)};
     double xMin {-xMax};
     double yMin {0.0};
     double yMax {0.0};

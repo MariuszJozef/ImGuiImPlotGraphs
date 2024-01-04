@@ -21,12 +21,12 @@ void Plot1::CalculatePlotCoordinates()
     x.clear();
     y.clear();
 
-    xMin = -selectedXAxisDomain * std::numbers::pi;
-    xMax = selectedXAxisDomain == 0 ? 2 * std::numbers::pi : selectedXAxisDomain * std::numbers::pi;
+    xMin = -selectedXAxisDomain * M_PI;
+    xMax = selectedXAxisDomain == 0 ? 2 * M_PI : selectedXAxisDomain * M_PI;
 
     plotPoints = std::round(plotPointsPerUnitLength * (xMax - xMin));
     xIncrement = (xMax - xMin) / (plotPoints - 1);
-    double period = 2 * std::numbers::pi / wavelength;
+    double period = 2 * M_PI / wavelength;
 
     for (int i = 0; i < plotPoints; ++i) 
     {
@@ -98,7 +98,7 @@ void Plot1::GenerateXTicks()
 
     for (int i = 0; i < xTicksCount; i++)
     {
-        double nextTick {xMin + i * std::numbers::pi / 2};
+        double nextTick {xMin + i * M_PI / 2};
         xTicks.push_back(nextTick);
     }
 }

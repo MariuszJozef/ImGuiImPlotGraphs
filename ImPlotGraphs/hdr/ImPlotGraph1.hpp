@@ -1,5 +1,5 @@
 #pragma once
-#include <numeric>
+#include <cmath>
 #include <map>
 #include <vector>
 #include <string>
@@ -56,13 +56,13 @@ private:
         };
     int selectedXAxisDomain {3};
     double xMin {0.0};
-    double xMax {2 * std::numbers::pi};
+    double xMax {2 * M_PI};
     double yMin {0.0};
     double yMax {0.0};
     
     float amplitude {1.0F}; // float because its is adjusted in ImGui::SliderFloat
     const float amplitudeMax {5.0F};
-    float wavelength {2.0F * std::numbers::pi};
+    float wavelength {2.0F * M_PI};
     float xShift {0.0F};
     float yShift {0.0F};
     bool isMarkers {false};

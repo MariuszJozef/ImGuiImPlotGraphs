@@ -136,7 +136,7 @@ void ImGuiView::DrawSubView1ForPlot1(ImPlotFrame* imPlotFrame)
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(225);
-    ImGui::SliderFloat("##label4: WAVELENGTH", imPlotFrame->plot1.SetWavelengthViaPtr(), 0.0F, 5 * std::numbers::pi, "wavelength: B = %.2F");
+    ImGui::SliderFloat("##label4: WAVELENGTH", imPlotFrame->plot1.SetWavelengthViaPtr(), 0.0F, 5 * M_PI, "wavelength: B = %.2F");
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(160);

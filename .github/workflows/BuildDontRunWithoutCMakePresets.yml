@@ -30,7 +30,7 @@ jobs:
           - name: "Unix Makefiles"
             buildDir: buildMake
           - name: "NMake Makefiles"
-            buildDir: buildMake
+            buildDir: buildNMake
 
         exclude:
           - os: ubuntu-latest

@@ -140,13 +140,13 @@ void Plot3::Graph()
 
 double Plot3::DiffractionPhase(double x)
 {
-    return std::numbers::pi * slitWidthMm * x / wavelengthMm 
+    return M_PI * slitWidthMm * x / wavelengthMm 
         / std::sqrt(screenPerpDistanceMm * screenPerpDistanceMm + x * x);
 }
 
 double Plot3::InterferencePhaseWithoutSlitNumber(double x)
 {
-    return std::numbers::pi * slitSeparationMm * x / wavelengthMm 
+    return M_PI * slitSeparationMm * x / wavelengthMm 
         / std::sqrt(screenPerpDistanceMm * screenPerpDistanceMm + x * x);
 }
 
