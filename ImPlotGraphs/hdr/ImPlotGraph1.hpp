@@ -1,4 +1,5 @@
 #pragma once
+#include <numeric>
 #include <map>
 #include <vector>
 #include <string>

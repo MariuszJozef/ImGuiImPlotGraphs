@@ -1,5 +1,5 @@
 #pragma once
-
+#include <numeric>
 #include <vector>
 #include <map>
 #include <tuple>
