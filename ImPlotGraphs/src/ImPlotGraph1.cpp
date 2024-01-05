@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include <cstdio>
-
+#include <cmath>
 #include "ImPlotGraph1.hpp"
 
 namespace Code::ImGuiImPlot

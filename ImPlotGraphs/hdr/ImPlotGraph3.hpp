@@ -1,5 +1,6 @@
 #pragma once
 #include <numeric>
+#include <cmath>
 #include <vector>
 #include <map>
 #include <tuple>

@@ -1,4 +1,4 @@
-#include <numeric>
+#include <cmath>
 #include <algorithm>
 #include "implot.h"
 #include "ImPlotGraph3.hpp"
