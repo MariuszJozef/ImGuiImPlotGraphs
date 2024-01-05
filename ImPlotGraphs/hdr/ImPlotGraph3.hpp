@@ -9,7 +9,7 @@
 namespace Code::ImGuiImPlot
 {
     
-extern const double PI;
+extern const float PI;
 
 class Plot3 : public PlotGeneric
 {

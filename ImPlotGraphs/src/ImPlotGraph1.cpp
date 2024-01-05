@@ -8,7 +8,7 @@
 namespace Code::ImGuiImPlot
 {
 
-extern const double PI;
+extern const float PI;
 
 Plot1::Plot1()
 {

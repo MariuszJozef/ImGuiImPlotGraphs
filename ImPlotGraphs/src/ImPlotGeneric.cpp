@@ -3,6 +3,6 @@
 namespace Code::ImGuiImPlot
 {
 
-extern const double PI { 3.14159265358979 };
+extern const float PI { 3.14159f };
 
 } // ~namespace Code::ImGuiImPlot

@@ -5,7 +5,7 @@
 namespace Code::ImGuiImPlot
 {
 
-extern const double PI;
+extern const float PI;
 
 Plot3::Plot3()
 {

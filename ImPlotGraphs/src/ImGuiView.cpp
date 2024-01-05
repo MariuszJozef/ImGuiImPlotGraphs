@@ -12,7 +12,7 @@
 namespace Code::ImGuiImPlot
 {
 
-extern const double PI;
+extern const float PI;
 
 ImGuiView::ImGuiView(ImGuiFonts& imGuiFonts)
     : imGuiFonts(imGuiFonts)
