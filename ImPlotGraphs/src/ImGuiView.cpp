@@ -1,6 +1,9 @@
+#if defined(_WIN32)
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
 #include <iostream>
 #include <sstream>
-#include <cmath>
 #include "imgui.h"
 #include "ImGuiView.hpp"
 #include "ImGuiFonts.hpp"

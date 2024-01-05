@@ -1,5 +1,8 @@
-#include <stdexcept>
+#if defined(_WIN32)
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
+#include <stdexcept>
 #include <algorithm>
 #include <sstream>
 #include <cstdio>
