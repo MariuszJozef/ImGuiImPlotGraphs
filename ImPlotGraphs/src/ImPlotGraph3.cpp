@@ -5,6 +5,8 @@
 namespace Code::ImGuiImPlot
 {
 
+extern const double PI;
+
 Plot3::Plot3()
 {
     plotPoints = std::round(plotPointsPerUnitLength * (xMax - xMin));
@@ -140,13 +142,13 @@ void Plot3::Graph()
 
 double Plot3::DiffractionPhase(double x)
 {
-    return M_PI * slitWidthMm * x / wavelengthMm 
+    return PI * slitWidthMm * x / wavelengthMm 
         / std::sqrt(screenPerpDistanceMm * screenPerpDistanceMm + x * x);
 }
 
 double Plot3::InterferencePhaseWithoutSlitNumber(double x)
 {
-    return M_PI * slitSeparationMm * x / wavelengthMm 
+    return PI * slitSeparationMm * x / wavelengthMm 
         / std::sqrt(screenPerpDistanceMm * screenPerpDistanceMm + x * x);
 }
 

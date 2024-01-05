@@ -1,7 +1,3 @@
-#if defined(_WIN32)
-#define _USE_MATH_DEFINES
-#endif
-#include <cmath>
 #include <stdexcept>
 #include <algorithm>
 #include <sstream>
@@ -11,6 +7,8 @@
 
 namespace Code::ImGuiImPlot
 {
+
+extern const double PI;
 
 Plot1::Plot1()
 {
@@ -24,12 +22,12 @@ void Plot1::CalculatePlotCoordinates()
     x.clear();
     y.clear();
 
-    xMin = -selectedXAxisDomain * M_PI;
-    xMax = selectedXAxisDomain == 0 ? 2 * M_PI : selectedXAxisDomain * M_PI;
+    xMin = -selectedXAxisDomain * PI;
+    xMax = selectedXAxisDomain == 0 ? 2 * PI : selectedXAxisDomain * PI;
 
     plotPoints = std::round(plotPointsPerUnitLength * (xMax - xMin));
     xIncrement = (xMax - xMin) / (plotPoints - 1);
-    double period = 2 * M_PI / wavelength;
+    double period = 2 * PI / wavelength;
 
     for (int i = 0; i < plotPoints; ++i) 
     {
@@ -101,7 +99,7 @@ void Plot1::GenerateXTicks()
 
     for (int i = 0; i < xTicksCount; i++)
     {
-        double nextTick {xMin + i * M_PI / 2};
+        double nextTick {xMin + i * PI / 2};
         xTicks.push_back(nextTick);
     }
 }

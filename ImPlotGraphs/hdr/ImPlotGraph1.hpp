@@ -1,9 +1,4 @@
 #pragma once
-
-#if defined(_WIN32)
-#define _USE_MATH_DEFINES
-#endif
-#include <cmath>
 #include <map>
 #include <vector>
 #include <string>
@@ -12,6 +7,8 @@
 
 namespace Code::ImGuiImPlot
 {
+
+extern const double PI;
 
 class Plot1 : public PlotGeneric
 {
@@ -60,13 +57,13 @@ private:
         };
     int selectedXAxisDomain {3};
     double xMin {0.0};
-    double xMax {2 * M_PI};
+    double xMax {2 * PI};
     double yMin {0.0};
     double yMax {0.0};
     
     float amplitude {1.0F}; // float because its is adjusted in ImGui::SliderFloat
     const float amplitudeMax {5.0F};
-    float wavelength {2.0F * M_PI};
+    float wavelength {2.0F * PI};
     float xShift {0.0F};
     float yShift {0.0F};
     bool isMarkers {false};

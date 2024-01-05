@@ -1,9 +1,5 @@
 #pragma once
 
-#if defined(_WIN32)
-#define _USE_MATH_DEFINES
-#endif
-#include <cmath>
 #include <vector>
 #include <map>
 #include <tuple>
@@ -13,6 +9,8 @@
 namespace Code::ImGuiImPlot
 {
     
+extern const double PI;
+
 class Plot3 : public PlotGeneric
 {
 public:
@@ -53,7 +51,7 @@ private:
     float screenPerpDistanceMm {500.0F};
     const double maxAngleToObservationPointDeg {2.0};
 
-    double xMax {screenPerpDistanceMm * tanf(M_PI / 180 * maxAngleToObservationPointDeg)};
+    double xMax {screenPerpDistanceMm * tanf(PI / 180 * maxAngleToObservationPointDeg)};
     double xMin {-xMax};
     double yMin {0.0};
     double yMax {0.0};

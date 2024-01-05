@@ -1,7 +1,3 @@
-#if defined(_WIN32)
-#define _USE_MATH_DEFINES
-#endif
-#include <cmath>
 #include <iostream>
 #include <sstream>
 #include "imgui.h"
@@ -15,6 +11,8 @@
 
 namespace Code::ImGuiImPlot
 {
+
+extern const double PI;
 
 ImGuiView::ImGuiView(ImGuiFonts& imGuiFonts)
     : imGuiFonts(imGuiFonts)
@@ -141,7 +139,7 @@ void ImGuiView::DrawSubView1ForPlot1(ImPlotFrame* imPlotFrame)
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(225);
-    ImGui::SliderFloat("##label4: WAVELENGTH", imPlotFrame->plot1.SetWavelengthViaPtr(), 0.0F, 5 * M_PI, "wavelength: B = %.2F");
+    ImGui::SliderFloat("##label4: WAVELENGTH", imPlotFrame->plot1.SetWavelengthViaPtr(), 0.0F, 5 * PI, "wavelength: B = %.2F");
 
     ImGui::SameLine(0.0f, 20.0f);
     ImGui::SetNextItemWidth(160);

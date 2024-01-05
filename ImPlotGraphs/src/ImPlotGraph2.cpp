@@ -1,7 +1,3 @@
-#if defined(_WIN32)
-#define _USE_MATH_DEFINES
-#endif
-#include <cmath>
 #include <array>
 #include <algorithm>
 #include <iostream>
@@ -10,6 +6,8 @@
 
 namespace Code::ImGuiImPlot
 {
+
+extern const double PI;
 
 Plot2::Plot2()
 {
@@ -65,16 +63,16 @@ void Plot2::CalculatePlotCoordinates()
         if (x2.at(i) != 0)
         {
             // Fourier transform of square pulse
-            y3.push_back(amplitude / M_PI / x2.at(i) * std::sin(x2.at(i) * width / 2));
+            y3.push_back(amplitude / PI / x2.at(i) * std::sin(x2.at(i) * width / 2));
 
             // Fourier transform of triangle pulse
             double sine = std::sin(x2.at(i) * width / 4);
-            y4.push_back(4 * amplitude / M_PI / width / x2.at(i) / x2.at(i) * sine * sine);
+            y4.push_back(4 * amplitude / PI / width / x2.at(i) / x2.at(i) * sine * sine);
         }
         else
         {
-            y3.push_back(amplitude * width / 2 / M_PI);
-            y4.push_back(amplitude * width / 4 / M_PI);
+            y3.push_back(amplitude * width / 2 / PI);
+            y4.push_back(amplitude * width / 4 / PI);
         }
     }
 }
@@ -183,10 +181,10 @@ void Plot2::Graph()
             static const int x2TicksCount {4};
             static constexpr int y2TicksCount {1};
             std::array<double, x2TicksCount> x2Ticks {
-                -8 * M_PI / width, 
-                -4 * M_PI / width, 
-                4 * M_PI / width,
-                8 * M_PI / width
+                -8 * PI / width, 
+                -4 * PI / width, 
+                4 * PI / width,
+                8 * PI / width
             };
 
             std::array<const char*, x2TicksCount> x2Labels {
@@ -194,7 +192,7 @@ void Plot2::Graph()
             };
 
             std::array<double, y2TicksCount> y2Ticks {
-                amplitude * width / 2 / M_PI
+                amplitude * width / 2 / PI
             };
 
             std::array<const char*, y2TicksCount> y2Labels {
@@ -272,10 +270,10 @@ void Plot2::Graph()
             static const int x2TicksCount {4};
             static constexpr int y2TicksCount {1};
             std::array<double, x2TicksCount> x2Ticks {
-                -8 * M_PI / width, 
-                -4 * M_PI / width, 
-                4 * M_PI / width,
-                8 * M_PI / width
+                -8 * PI / width, 
+                -4 * PI / width, 
+                4 * PI / width,
+                8 * PI / width
             };
 
             std::array<const char*, x2TicksCount> x2Labels {
@@ -283,7 +281,7 @@ void Plot2::Graph()
             };
 
             std::array<double, y2TicksCount> y2Ticks {
-                amplitude * width / 4 / M_PI
+                amplitude * width / 4 / PI
             };
 
             std::array<const char*, y2TicksCount> y2Labels {
