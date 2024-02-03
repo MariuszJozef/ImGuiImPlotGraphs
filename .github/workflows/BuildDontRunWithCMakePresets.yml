@@ -31,6 +31,7 @@ jobs:
           - Make-Clang-Release
 
         exclude:
+        # Ubuntu doesn't have MSVC compiler
           - os: ubuntu-latest
             preset: Ninja-Msvc-Debug
           - os: ubuntu-latest
@@ -40,6 +41,8 @@ jobs:
           - os: ubuntu-latest
             preset: NMake-Msvc-Release
 
+        # MacOS doesn't have MSVC compiler nor the GNU C++ compiler 
+        # (actually its g++ is an alias for clang++)
           - os: macos-latest
             preset: Ninja-Gnu-Debug
           - os: macos-latest
@@ -57,6 +60,7 @@ jobs:
           - os: macos-latest
             preset: NMake-Gnu-Release
 
+        # Windows doesn't have GNU nor Clang compilers
           - os: windows-latest
             preset: Ninja-Gnu-Debug
           - os: windows-latest
@@ -79,63 +83,107 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
+
+    - name: Install MSVC compiler
+      if: ${{matrix.os == 'windows-latest'}}
+      uses: ilammy/msvc-dev-cmd@v1
         
     - name: Install Ninja
       uses: seanmiddleditch/gha-setup-ninja@master
 
-    - name: Setup MSVC compiler
-      if: ${{matrix.os == 'windows-latest'}}
-      uses: ilammy/msvc-dev-cmd@v1
+# Do not cache SDL2 on Linux because it is tied to too many dependencies which would also need to be cached 
 
-    - name: MSVC compiler version
+    - name: Cache SDL2 on Mac (if not yet cached) or else restore it from cache (if cached already)
+      if: ${{matrix.os == 'macos-latest'}}
+      id: mac-SDL2-ID-installed-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/Cellar/sdl2
+        key: mac-SDL2-KEY-installed-cache
+
+    - name: Cache SDL2 on Windows (if not yet cached) or else restore it from cache (if cached already)
       if: ${{matrix.os == 'windows-latest'}}
+      id: windows-SDL2-ID-installed-cache
+      uses: actions/cache@v3
+      with:
+        path: C:\SDL2
+        key: windows-SDL2-KEY-installed-cache
+
+    - name: Install SDL2 on Linux/Mac if it is not yet cached
+      if: ${{matrix.os != 'windows-latest'}}
       shell: bash
       run: |
-        echo cl
-        cl
+        if [[ ${{matrix.os == 'ubuntu-latest'}} == "true" ]]; then
+      # &&
+      # steps.windows-SDL2-ID-installed-cache.outputs.cache-hit != 'true'
+          echo sudo apt-get install libsdl2-dev
+          sudo apt-get install libsdl2-dev
 
-    - name: Install SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: sudo apt-get install libsdl2-dev
+          echo find /usr/include/SDL2 -iname SDL.h
+          find /usr/include/SDL2 -iname SDL.h
+          echo find /usr/lib/x86_64-linux-gnu -iname libSDL2.a
+          find /usr/lib/x86_64-linux-gnu -iname libSDL2.a
+          echo find /usr/lib/x86_64-linux-gnu -iname libSDL2.so
+          find /usr/lib/x86_64-linux-gnu -iname libSDL2.so
+          echo find /usr/lib/x86_64-linux-gnu/cmake/SDL2 -iname SDL2?Config.cmake
+          find /usr/lib/x86_64-linux-gnu/cmake/SDL2 -iname SDL2?Config.cmake
+          
+          echo ls /usr/include/SDL2
+          ls /usr/include/SDL2
+          echo ls /usr/lib/x86_64-linux-gnu
+          ls /usr/lib/x86_64-linux-gnu
+          echo ls /usr/lib/x86_64-linux-gnu/cmake/SDL2
+          ls /usr/lib/x86_64-linux-gnu/cmake/SDL2
 
-    - name: Install SDL (Macos)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: brew install sdl2
+        elif [[ ${{matrix.os == 'macos-latest'}} == "true" ]]; then
+          echo brew install sdl2
+          brew install sdl2
 
-    - name: Install SDL (Windows)
+          find /usr/local/Cellar/sdl2 -iname SDL.h
+          find /usr/local/Cellar/sdl2 -iname libSDL2.a
+          find /usr/local/Cellar/sdl2 -iname libSDL2.so
+          find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+          
+          echo ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+          ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+          echo ls /usr/local/Cellar/sdl2/2.28.5/lib
+          ls /usr/local/Cellar/sdl2/2.28.5/lib
+          echo ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+          ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+        fi
+
+    - name: Install SDL2 on Windows if it is not yet cached
       if: ${{matrix.os == 'windows-latest'}}
       run: |
         Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
         Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
-
-    - name: Show location of installed SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: |
-        find /usr -iname SDL.h
-        find /usr -iname libSDL2.a
-        find /usr -iname libSDL2.so
-        find /usr -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (MacOS)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: |
-        find /usr/local/Cellar/sdl2 -iname SDL.h
-        find /usr/local/Cellar/sdl2 -iname libSDL2.a
-        find /usr/local/Cellar/sdl2 -iname libSDL2.so
-        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (Windows)
-      if: ${{matrix.os == 'windows-latest'}}
-      shell: powershell
-      run: |
+        
+        Write-Host ls C:\SDL2 -Include SDL.h -Recurse -Name
         ls C:\SDL2 -Include SDL.h -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2.lib -Recurse -Name
         ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2.dll -Recurse -Name
         ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
         ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+
+        Write-Host ls C:\SDL2\SDL2-2.28.5\include -Name
+        ls C:\SDL2\SDL2-2.28.5\include -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\cmake -Name
+        ls C:\SDL2\SDL2-2.28.5\cmake -Name
 
     - name: Tool versions
       shell: bash
-      run: | 
+      run: |
+        if [[ ${{matrix.os == 'windows-latest'}} == "true" ]]; then
+          echo cl
+          cl
+          echo
+        fi
         echo g++ --version
         g++ --version
         echo 
@@ -162,6 +210,7 @@ jobs:
 
 #====================
 # Comment out because Github Action will launch the GUI but will not be able to stop it
+# so it would run indefinitely, and there is no way to interact with the GUI anyway.
 #====================
     # - name: CMake run program
     #   run: cmake --build --preset ${{matrix.preset}} --target run
@@ -221,63 +270,55 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
-        
-    - name: Install Ninja
-      uses: seanmiddleditch/gha-setup-ninja@master
 
-    - name: Setup MSVC compiler
+    - name: Install MSVC compiler
       if: ${{matrix.os == 'windows-latest'}}
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: MSVC compiler version
-      if: ${{matrix.os == 'windows-latest'}}
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Install SDL2 (Linux/Mac)
+      if: ${{matrix.os != 'windows-latest'}}
       shell: bash
       run: |
-        echo cl
-        cl
+        if [[ ${{matrix.os == 'ubuntu-latest'}} == "true" ]]; then
+          echo sudo apt-get install libsdl2-dev
+          sudo apt-get install libsdl2-dev
+          echo 
+          find /usr -iname SDL.h
+          find /usr -iname libSDL2.a
+          find /usr -iname libSDL2.so
+          find /usr -iname SDL2?Config.cmake
+        elif [[ ${{matrix.os == 'macos-latest'}} == "true" ]]; then
+          echo brew install sdl2
+          brew install sdl2
+          echo 
+          find /usr/local/Cellar/sdl2 -iname SDL.h
+          find /usr/local/Cellar/sdl2 -iname libSDL2.a
+          find /usr/local/Cellar/sdl2 -iname libSDL2.so
+          find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+        fi
 
-    - name: Install SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: sudo apt-get install libsdl2-dev
-
-    - name: Install SDL (Macos)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: brew install sdl2
-
-    - name: Install SDL (Windows)
+    - name: Install SDL2 (Windows)
       if: ${{matrix.os == 'windows-latest'}}
       run: |
         Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
         Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
-
-    - name: Show location of installed SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: |
-        find /usr -iname SDL.h
-        find /usr -iname libSDL2.a
-        find /usr -iname libSDL2.so
-        find /usr -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (MacOS)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: |
-        find /usr/local/Cellar/sdl2 -iname SDL.h
-        find /usr/local/Cellar/sdl2 -iname libSDL2.a
-        find /usr/local/Cellar/sdl2 -iname libSDL2.so
-        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (Windows)
-      if: ${{matrix.os == 'windows-latest'}}
-      shell: powershell
-      run: |
+        Write-Host ""
         ls C:\SDL2 -Include SDL.h -Recurse -Name
         ls C:\SDL2 -Include SDL2.lib -Recurse -Name
         ls C:\SDL2 -Include SDL2.dll -Recurse -Name
         ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
-
+        
     - name: Tool versions
       shell: bash
-      run: | 
+      run: |
+        if [[ ${{matrix.os == 'windows-latest'}} == "true" ]]; then
+          echo cl
+          cl
+          echo
+        fi
         echo g++ --version
         g++ --version
         echo 
@@ -304,6 +345,7 @@ jobs:
 
 #====================
 # Comment out because Github Action will launch the GUI but will not be able to stop it
+# so it would run indefinitely, and there is no way to interact with the GUI anyway.
 #====================
     # - name: CMake run program
     #   run: cmake --build --preset ${{matrix.preset}} --config ${{matrix.build_type}} --target run

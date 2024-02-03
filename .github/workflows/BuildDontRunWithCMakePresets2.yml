@@ -1,0 +1,543 @@
+name: Build with CMakePresets.json but do not run because Github Action cannot stop the GUI, cache SDL2 whether it be installed by package manager/powershell or fetched by CMake
+
+on:
+  push: 
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+env:
+  SDL_VERSION: 2.28.5
+  
+jobs:
+  singleConfig:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        preset:
+        # single config generators
+          - Ninja-Msvc-Debug
+          - Ninja-Msvc-Release
+          - Ninja-Gnu-Debug
+          - Ninja-Gnu-Release
+          - Ninja-Clang-Debug
+          - Ninja-Clang-Release
+          - NMake-Msvc-Debug
+          - NMake-Msvc-Release
+          - Make-Gnu-Debug
+          - Make-Gnu-Release
+          - Make-Clang-Debug
+          - Make-Clang-Release
+
+        exclude:
+        # Ubuntu doesn't have MSVC compiler
+        # Ubuntu doesn't have NMake generator
+          - os: ubuntu-latest
+            preset: Ninja-Msvc-Debug
+          - os: ubuntu-latest
+            preset: Ninja-Msvc-Release
+          - os: ubuntu-latest
+            preset: NMake-Msvc-Debug
+          - os: ubuntu-latest
+            preset: NMake-Msvc-Release
+
+        # Mac doesn't have MSVC nor GNU compiler (its Gnu is an alias for Clang compiler)
+        # Ubuntu doesn't have NMake generator
+          - os: macos-latest
+            preset: Ninja-Gnu-Debug
+          - os: macos-latest
+            preset: Ninja-Gnu-Release
+          - os: macos-latest
+            preset: Ninja-Msvc-Debug
+          - os: macos-latest
+            preset: Ninja-Msvc-Release
+          - os: macos-latest
+            preset: NMake-Msvc-Debug
+          - os: macos-latest
+            preset: NMake-Msvc-Release
+          - os: macos-latest
+            preset: NMake-Gnu-Debug
+          - os: macos-latest
+            preset: NMake-Gnu-Release
+
+        # Windows doesn't have GNU nor Clang compilers
+        # Windows doesn't have Make generator
+          - os: windows-latest
+            preset: Ninja-Gnu-Debug
+          - os: windows-latest
+            preset: Ninja-Gnu-Release
+          - os: windows-latest
+            preset: Ninja-Clang-Debug
+          - os: windows-latest
+            preset: Ninja-Clang-Release
+          - os: windows-latest
+            preset: Make-Gnu-Debug
+          - os: windows-latest
+            preset: Make-Gnu-Release
+          - os: windows-latest
+            preset: Make-Clang-Debug
+          - os: windows-latest
+            preset: Make-Clang-Release
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Install MSVC compiler
+      if: ${{matrix.os == 'windows-latest'}}
+      uses: ilammy/msvc-dev-cmd@v1
+        
+    # - name: Install Ninja
+    #   uses: seanmiddleditch/gha-setup-ninja@master
+    - name: Install Ninja
+      shell: bash
+      run: ${{ runner.os == 'macOS' && 'brew install ninja' || runner.os == 'Windows' && 'choco install ninja' || 'sudo apt-get install ninja-build' }}
+
+    - name: Cache SDL2 if it has beed fetched by CMake or else restore it from cache without fetching again
+      id: ID-SDL2-fetched-cache
+      uses: actions/cache@v3
+      with:
+        path: External/SDL2
+        key: KEY-SDL2-fetched-cache
+
+    - name: Is fetched SDL2 cached?
+      if: steps.ID-SDL2-fetched-cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        echo YES cached!
+        find External/SDL2 -iname SDL.h
+        find External/SDL2 -iname libSDL2.a
+        find External/SDL2 -iname libSDL2.so
+        find External/SDL2 -iname libSDL2.dll
+        find External/SDL2 -iname SDL2?Config.cmake
+
+    - name: Is fetched SDL2 not yet cached?
+      if: steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true'
+      run: |
+        echo NO not yet cached!
+        ls External
+
+# LINUX: On Linux do not cache SDL2 which has been installed with apt-get because it is tied to too many dependencies which would also need to be cached (and that's too difficult)
+    - name: Install SDL2 on Linux with package manager only if it has not been fetched by CMake
+      if: ${{ (matrix.os == 'ubuntu-latest') && (hashFiles('External/SDL2/CMakeLists.txt') == '') && (steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true') }}
+      run: |
+          echo sudo apt-get update
+          sudo apt-get update
+          echo sudo apt-get upgrade
+          sudo apt-get upgrade
+          echo sudo apt-get install libsdl2-dev
+          sudo apt-get install libsdl2-dev
+
+          echo find /usr/include/SDL2 -iname SDL.h
+          find /usr/include/SDL2 -iname SDL.h
+          echo find /usr/lib/x86_64-linux-gnu -iname libSDL2.a
+          find /usr/lib/x86_64-linux-gnu -iname libSDL2.a
+          echo find /usr/lib/x86_64-linux-gnu -iname libSDL2.so
+          find /usr/lib/x86_64-linux-gnu -iname libSDL2.so
+          echo find /usr/lib/x86_64-linux-gnu/cmake/SDL2 -iname SDL2?Config.cmake
+          find /usr/lib/x86_64-linux-gnu/cmake/SDL2 -iname SDL2?Config.cmake
+          
+          echo ls /usr/include/SDL2
+          ls /usr/include/SDL2
+          echo ls /usr/lib/x86_64-linux-gnu
+          ls /usr/lib/x86_64-linux-gnu
+          echo ls /usr/lib/x86_64-linux-gnu/cmake/SDL2
+          ls /usr/lib/x86_64-linux-gnu/cmake/SDL2
+
+
+# MAC OS
+    - name: On Mac (with SDL2 installed by package manager) cache SDL2 (if not yet cached) or else restore it from cache (if cached already)
+      if: ${{matrix.os == 'macos-latest'}}
+      id: mac-ID-SDL2-installed-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/Cellar/sdl2
+        key: mac-KEY-SDL2-installed-cache
+
+    - name: Install SDL2 on Mac if it is not yet cached
+      if: ${{ (matrix.os == 'macos-latest') && (steps.mac-ID-SDL2-installed-cache.outputs.cache-hit != 'true') && (steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true') }}
+      run: |
+          echo brew install sdl2
+          brew install sdl2
+
+          find /usr/local/Cellar/sdl2 -iname SDL.h
+          find /usr/local/Cellar/sdl2 -iname libSDL2.a
+          find /usr/local/Cellar/sdl2 -iname libSDL2.so
+          find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+          
+          echo ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+          ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+          echo ls /usr/local/Cellar/sdl2/2.28.5/lib
+          ls /usr/local/Cellar/sdl2/2.28.5/lib
+          echo ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+          ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+
+    - name: Restore SDL2 on Mac from cache; do not reinstall it!
+      if: ${{ (matrix.os == 'macos-latest') && (steps.mac-ID-SDL2-installed-cache.outputs.cache-hit == 'true') }}
+      run: |
+        echo YES cached!
+        find /usr/local/Cellar/sdl2 -iname SDL.h
+        find /usr/local/Cellar/sdl2 -iname libSDL2.a
+        find /usr/local/Cellar/sdl2 -iname libSDL2.so
+        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+        
+        echo ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+        ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+        echo ls /usr/local/Cellar/sdl2/2.28.5/lib
+        ls /usr/local/Cellar/sdl2/2.28.5/lib
+        echo ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+        ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+
+
+# WINDOWS
+    - name: On Windows (with SDL2 binaries installed) cache SDL2 (if not yet cached) or else restore it from cache (if cached already)
+      if: ${{matrix.os == 'windows-latest'}}
+      id: windows-ID-SDL2-installed-cache
+      uses: actions/cache@v3
+      with:
+        path: C:\SDL2
+        key: windows-KEY-SDL2-installed-cache
+
+    - name: Install SDL2 on Windows if it is not yet cached
+      if: ${{ (matrix.os == 'windows-latest') && (steps.windows-ID-SDL2-installed-cache.outputs.cache-hit != 'true') && (steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true') }}
+      shell: powershell
+      run: |
+        Write-Host 'Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip'
+        Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
+        
+        Write-Host Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
+        Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
+        
+        Write-Host ls C:\SDL2 -Include SDL.h -Recurse -Name
+        ls C:\SDL2 -Include SDL.h -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+        ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+
+        Write-Host ls C:\SDL2\SDL2-2.28.5\include -Name
+        ls C:\SDL2\SDL2-2.28.5\include -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\cmake -Name
+        ls C:\SDL2\SDL2-2.28.5\cmake -Name
+
+    - name: Restore SDL2 on Windows from cache; do not reinstall it!
+      if: ${{ (matrix.os == 'windows-latest') && (steps.windows-ID-SDL2-installed-cache.outputs.cache-hit == 'true') }}
+      shell: powershell
+      run: |
+        echo YES cached!
+        ls C:\SDL2 -Include SDL.h -Recurse -Name
+        ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+
+        echo ls C:\SDL2\SDL2-2.28.5\include -Name
+        ls C:\SDL2\SDL2-2.28.5\include -Name
+        echo ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        echo ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        echo ls C:\SDL2\SDL2-2.28.5\cmake -Name
+        ls C:\SDL2\SDL2-2.28.5\cmake -Name
+
+    - name: Tool versions
+      shell: bash
+      run: |
+        if [[ ${{matrix.os == 'windows-latest'}} == "true" ]]; then
+          echo cl
+          cl
+          echo
+        fi
+        echo g++ --version
+        g++ --version
+        echo 
+        echo clang++ --version
+        clang++ --version
+        echo 
+        echo cmake --version
+        cmake --version
+        echo 
+        echo ninja --version
+        ninja --version
+
+    - name: Parameter values
+      shell: bash
+      run: | 
+        echo platform = ${{runner.os}}
+        echo preset = ${{matrix.preset}}
+
+    - name: CMake configure
+      run: cmake --preset ${{matrix.preset}}
+      
+    - name: CMake build
+      run: cmake --build --preset ${{matrix.preset}}
+
+#====================
+# Comment out because Github Action will launch the GUI but will not be able to stop it
+# so it would run indefinitely, and there is no way to interact with the GUI anyway.
+#====================
+    # - name: CMake run program
+    #   run: cmake --build --preset ${{matrix.preset}} --target run
+
+
+  multiConfig:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        preset:
+        # multi config generators
+          - NinjaMC-Msvc
+          - NinjaMC-Gnu
+          - NinjaMC-Clang
+          - VSx32-Msvc
+          - VSx64-Msvc
+          - Xcode-Clang
+        build_type: [Debug, Release]
+
+        exclude:
+        # Ubuntu doesn't have MSVC compiler
+        # Ubuntu doesn't have Visual Studio nor Xcode generators
+          - os: ubuntu-latest
+            preset: NinjaMC-Msvc
+          - os: ubuntu-latest
+            preset: VSx32-Msvc
+          - os: ubuntu-latest
+            preset: VSx64-Msvc
+          - os: ubuntu-latest
+            preset: Xcode-Clang
+
+        # Mac doesn't have MSVC nor GNU compiler (its Gnu is an alias for Clang compiler)
+        # Mac doesn't have Visual Studio generator
+          - os: macos-latest
+            preset: NinjaMC-Gnu
+          - os: macos-latest
+            preset: NinjaMC-Msvc
+          - os: macos-latest
+            preset: VSx32-Msvc
+          - os: macos-latest
+            preset: VSx64-Msvc
+
+        # Windows doesn't have GNU nor Clang compilers
+        # Windows doesn't have Xcode generator
+          - os: windows-latest
+            preset: NinjaMC-Gnu
+          - os: windows-latest
+            preset: NinjaMC-Clang
+          - os: windows-latest
+            preset: Xcode-Clang
+        
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Install MSVC compiler
+      if: ${{matrix.os == 'windows-latest'}}
+      uses: ilammy/msvc-dev-cmd@v1
+        
+    # - name: Install Ninja
+    #   uses: seanmiddleditch/gha-setup-ninja@master
+    - name: Install Ninja
+      shell: bash
+      run: ${{ runner.os == 'macOS' && 'brew install ninja' || runner.os == 'Windows' && 'choco install ninja' || 'sudo apt-get install ninja-build' }}
+
+    - name: Cache SDL2 if it has beed fetched by CMake or else restore it from cache without fetching again
+      id: ID-SDL2-fetched-cache
+      uses: actions/cache@v3
+      with:
+        path: External/SDL2
+        key: KEY-SDL2-fetched-cache
+
+    - name: Is fetched SDL2 cached?
+      if: steps.ID-SDL2-fetched-cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        echo YES cached!
+        find External/SDL2 -iname SDL.h
+        find External/SDL2 -iname libSDL2.a
+        find External/SDL2 -iname libSDL2.so
+        find External/SDL2 -iname libSDL2.dll
+        find External/SDL2 -iname SDL2?Config.cmake
+
+    - name: Is fetched SDL2 not yet cached?
+      if: steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true'
+      run: |
+        echo NO not yet cached!
+        ls External
+
+# LINUX: On Linux do not cache SDL2 which has been installed with apt-get because it is tied to too many dependencies which would also need to be cached (and that's too difficult)
+    - name: Install SDL2 on Linux with package manager only if it has not been fetched by CMake
+      if: ${{ (matrix.os == 'ubuntu-latest') && (hashFiles('External/SDL2/CMakeLists.txt') == '') && (steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true') }}
+      run: |
+          echo sudo apt-get update
+          sudo apt-get update
+          echo sudo apt-get upgrade
+          sudo apt-get upgrade
+          echo sudo apt-get install libsdl2-dev
+          sudo apt-get install libsdl2-dev
+
+          echo find /usr/include/SDL2 -iname SDL.h
+          find /usr/include/SDL2 -iname SDL.h
+          echo find /usr/lib/x86_64-linux-gnu -iname libSDL2.a
+          find /usr/lib/x86_64-linux-gnu -iname libSDL2.a
+          echo find /usr/lib/x86_64-linux-gnu -iname libSDL2.so
+          find /usr/lib/x86_64-linux-gnu -iname libSDL2.so
+          echo find /usr/lib/x86_64-linux-gnu/cmake/SDL2 -iname SDL2?Config.cmake
+          find /usr/lib/x86_64-linux-gnu/cmake/SDL2 -iname SDL2?Config.cmake
+          
+          echo ls /usr/include/SDL2
+          ls /usr/include/SDL2
+          echo ls /usr/lib/x86_64-linux-gnu
+          ls /usr/lib/x86_64-linux-gnu
+          echo ls /usr/lib/x86_64-linux-gnu/cmake/SDL2
+          ls /usr/lib/x86_64-linux-gnu/cmake/SDL2
+
+
+# MAC OS
+    - name: On Mac (with SDL2 installed by package manager) cache SDL2 (if not yet cached) or else restore it from cache (if cached already)
+      if: ${{matrix.os == 'macos-latest'}}
+      id: mac-ID-SDL2-installed-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/Cellar/sdl2
+        key: mac-KEY-SDL2-installed-cache
+
+    - name: Install SDL2 on Mac if it is not yet cached
+      if: ${{ (matrix.os == 'macos-latest') && (steps.mac-ID-SDL2-installed-cache.outputs.cache-hit != 'true') && (steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true') }}
+      run: |
+          echo brew install sdl2
+          brew install sdl2
+
+          find /usr/local/Cellar/sdl2 -iname SDL.h
+          find /usr/local/Cellar/sdl2 -iname libSDL2.a
+          find /usr/local/Cellar/sdl2 -iname libSDL2.so
+          find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+          
+          echo ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+          ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+          echo ls /usr/local/Cellar/sdl2/2.28.5/lib
+          ls /usr/local/Cellar/sdl2/2.28.5/lib
+          echo ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+          ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+
+    - name: Restore SDL2 on Mac from cache; do not reinstall it!
+      if: ${{ (matrix.os == 'macos-latest') && (steps.mac-ID-SDL2-installed-cache.outputs.cache-hit == 'true') }}
+      run: |
+        echo YES cached!
+        find /usr/local/Cellar/sdl2 -iname SDL.h
+        find /usr/local/Cellar/sdl2 -iname libSDL2.a
+        find /usr/local/Cellar/sdl2 -iname libSDL2.so
+        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+        
+        echo ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+        ls /usr/local/Cellar/sdl2/2.28.5/include/SDL2
+        echo ls /usr/local/Cellar/sdl2/2.28.5/lib
+        ls /usr/local/Cellar/sdl2/2.28.5/lib
+        echo ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+        ls /usr/local/Cellar/sdl2/2.28.5/lib/cmake/SDL2
+
+
+# WINDOWS
+    - name: On Windows (with SDL2 binaries installed) cache SDL2 (if not yet cached) or else restore it from cache (if cached already)
+      if: ${{matrix.os == 'windows-latest'}}
+      id: windows-ID-SDL2-installed-cache
+      uses: actions/cache@v3
+      with:
+        path: C:\SDL2
+        key: windows-KEY-SDL2-installed-cache
+
+    - name: Install SDL2 on Windows if it is not yet cached
+      if: ${{ (matrix.os == 'windows-latest') && (steps.windows-ID-SDL2-installed-cache.outputs.cache-hit != 'true') && (steps.ID-SDL2-fetched-cache.outputs.cache-hit != 'true') }}
+      shell: powershell
+      run: |
+        Write-Host 'Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip'
+        Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
+        
+        Write-Host Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
+        Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
+        
+        Write-Host ls C:\SDL2 -Include SDL.h -Recurse -Name
+        ls C:\SDL2 -Include SDL.h -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        Write-Host ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+        ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+
+        Write-Host ls C:\SDL2\SDL2-2.28.5\include -Name
+        ls C:\SDL2\SDL2-2.28.5\include -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        Write-Host ls C:\SDL2\SDL2-2.28.5\cmake -Name
+        ls C:\SDL2\SDL2-2.28.5\cmake -Name
+
+    - name: Restore SDL2 on Windows from cache; do not reinstall it!
+      if: ${{ (matrix.os == 'windows-latest') && (steps.windows-ID-SDL2-installed-cache.outputs.cache-hit == 'true') }}
+      shell: powershell
+      run: |
+        echo YES cached!
+        ls C:\SDL2 -Include SDL.h -Recurse -Name
+        ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
+
+        echo ls C:\SDL2\SDL2-2.28.5\include -Name
+        ls C:\SDL2\SDL2-2.28.5\include -Name
+        echo ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x86 -Name
+        echo ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        ls C:\SDL2\SDL2-2.28.5\lib\x64 -Name
+        echo ls C:\SDL2\SDL2-2.28.5\cmake -Name
+        ls C:\SDL2\SDL2-2.28.5\cmake -Name
+
+    - name: Tool versions
+      shell: bash
+      run: |
+        if [[ ${{matrix.os == 'windows-latest'}} == "true" ]]; then
+          echo cl
+          cl
+          echo
+        fi
+        echo g++ --version
+        g++ --version
+        echo 
+        echo clang++ --version
+        clang++ --version
+        echo 
+        echo cmake --version
+        cmake --version
+        echo 
+        echo ninja --version
+        ninja --version
+
+    - name: Parameter values
+      shell: bash
+      run: | 
+        echo platform = ${{runner.os}}
+        echo preset = ${{matrix.preset}}
+
+    - name: CMake configure
+      run: cmake --preset ${{matrix.preset}}
+      
+    - name: CMake build
+      run: cmake --build --preset ${{matrix.preset}}
+
+#====================
+# Comment out because Github Action will launch the GUI but will not be able to stop it
+# so it would run indefinitely, and there is no way to interact with the GUI anyway.
+#====================
+    # - name: CMake run program
+    #   run: cmake --build --preset ${{matrix.preset}} --target run

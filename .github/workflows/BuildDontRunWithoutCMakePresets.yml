@@ -65,55 +65,42 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
-        
-    - name: Install Ninja
-      uses: seanmiddleditch/gha-setup-ninja@master
 
-    - name: Setup MSVC compiler
+    - name: Install MSVC compiler
       if: ${{matrix.os == 'windows-latest'}}
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: MSVC compiler version
-      if: ${{matrix.os == 'windows-latest'}}
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Install SDL2 (Linux/Mac)
+      if: ${{matrix.os != 'windows-latest'}}
       shell: bash
       run: |
-        echo cl
-        cl
+        if [[ ${{matrix.os == 'ubuntu-latest'}} == "true" ]]; then
+          echo sudo apt-get install libsdl2-dev
+          sudo apt-get install libsdl2-dev
+          echo 
+          find /usr -iname SDL.h
+          find /usr -iname libSDL2.a
+          find /usr -iname libSDL2.so
+          find /usr -iname SDL2?Config.cmake
+        elif [[ ${{matrix.os == 'macos-latest'}} == "true" ]]; then
+          echo brew install sdl2
+          brew install sdl2
+          echo 
+          find /usr/local/Cellar/sdl2 -iname SDL.h
+          find /usr/local/Cellar/sdl2 -iname libSDL2.a
+          find /usr/local/Cellar/sdl2 -iname libSDL2.so
+          find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+        fi
 
-    - name: Install SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: sudo apt-get install libsdl2-dev
-
-    - name: Install SDL (Macos)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: brew install sdl2
-
-    - name: Install SDL (Windows)
+    - name: Install SDL2 (Windows)
       if: ${{matrix.os == 'windows-latest'}}
       run: |
         Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
         Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
-
-    - name: Show location of installed SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: |
-        find /usr -iname SDL.h
-        find /usr -iname libSDL2.a
-        find /usr -iname libSDL2.so
-        find /usr -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (MacOS)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: |
-        find /usr/local/Cellar/sdl2 -iname SDL.h
-        find /usr/local/Cellar/sdl2 -iname libSDL2.a
-        find /usr/local/Cellar/sdl2 -iname libSDL2.so
-        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (Windows)
-      if: ${{matrix.os == 'windows-latest'}}
-      shell: powershell
-      run: |
+        Write-Host ""
         ls C:\SDL2 -Include SDL.h -Recurse -Name
         ls C:\SDL2 -Include SDL2.lib -Recurse -Name
         ls C:\SDL2 -Include SDL2.dll -Recurse -Name
@@ -121,7 +108,12 @@ jobs:
 
     - name: Tool versions
       shell: bash
-      run: | 
+      run: |
+        if [[ ${{matrix.os == 'windows-latest'}} == "true" ]]; then
+          echo cl
+          cl
+          echo
+        fi
         echo g++ --version
         g++ --version
         echo 
@@ -158,6 +150,7 @@ jobs:
 
 #====================
 # Comment out because Github Action will launch the GUI but will not be able to stop it
+# so it would run indefinitely, and there is no way to interact with the GUI anyway.
 #====================
     # - name: CMake run
     #   run: > 
@@ -222,54 +215,41 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    - name: Install Ninja
-      uses: seanmiddleditch/gha-setup-ninja@master
-
-    - name: Setup MSVC compiler
+    - name: Install MSVC compiler
       if: ${{matrix.os == 'windows-latest'}}
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: MSVC compiler version
-      if: ${{matrix.os == 'windows-latest'}}
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Install SDL2 (Linux/Mac)
+      if: ${{matrix.os != 'windows-latest'}}
       shell: bash
       run: |
-        echo cl
-        cl
+        if [[ ${{matrix.os == 'ubuntu-latest'}} == "true" ]]; then
+          echo sudo apt-get install libsdl2-dev
+          sudo apt-get install libsdl2-dev
+          echo 
+          find /usr -iname SDL.h
+          find /usr -iname libSDL2.a
+          find /usr -iname libSDL2.so
+          find /usr -iname SDL2?Config.cmake
+        elif [[ ${{matrix.os == 'macos-latest'}} == "true" ]]; then
+          echo brew install sdl2
+          brew install sdl2
+          echo 
+          find /usr/local/Cellar/sdl2 -iname SDL.h
+          find /usr/local/Cellar/sdl2 -iname libSDL2.a
+          find /usr/local/Cellar/sdl2 -iname libSDL2.so
+          find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+        fi
 
-    - name: Install SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: sudo apt-get install libsdl2-dev
-
-    - name: Install SDL (Macos)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: brew install sdl2
-
-    - name: Install SDL (Windows)
+    - name: Install SDL2 (Windows)
       if: ${{matrix.os == 'windows-latest'}}
       run: |
         Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
         Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
-
-    - name: Show location of installed SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: |
-        find /usr -iname SDL.h
-        find /usr -iname libSDL2.a
-        find /usr -iname libSDL2.so
-        find /usr -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (MacOS)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: |
-        find /usr/local/Cellar/sdl2 -iname SDL.h
-        find /usr/local/Cellar/sdl2 -iname libSDL2.a
-        find /usr/local/Cellar/sdl2 -iname libSDL2.so
-        find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
-
-    - name: Show location of installed SDL (Windows)
-      if: ${{matrix.os == 'windows-latest'}}
-      shell: powershell
-      run: |
+        Write-Host ""
         ls C:\SDL2 -Include SDL.h -Recurse -Name
         ls C:\SDL2 -Include SDL2.lib -Recurse -Name
         ls C:\SDL2 -Include SDL2.dll -Recurse -Name
@@ -277,7 +257,12 @@ jobs:
 
     - name: Tool versions
       shell: bash
-      run: | 
+      run: |
+        if [[ ${{matrix.os == 'windows-latest'}} == "true" ]]; then
+          echo cl
+          cl
+          echo
+        fi
         echo g++ --version
         g++ --version
         echo 
@@ -289,14 +274,6 @@ jobs:
         echo 
         echo ninja --version
         ninja --version
-
-    - name: Parameter values
-      shell: bash
-      run: | 
-        echo platform = ${{runner.os}}
-        echo generator = ${{matrix.generator.name}}
-        echo buildType = ${{matrix.buildType}}
-        echo compiler = ${{matrix.compilerCpp.name}}
 
     - name: Parameter values
       shell: bash
@@ -322,6 +299,7 @@ jobs:
 
 #====================
 # Comment out because Github Action will launch the GUI but will not be able to stop it
+# so it would run indefinitely, and there is no way to interact with the GUI anyway.s
 #====================
     # - name: CMake run
     #   run: > 
@@ -362,59 +340,65 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    - name: Setup MSVC compiler
+    - name: Install MSVC compiler
+      if: ${{matrix.os == 'windows-latest'}}
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: MSVC compiler version
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Install SDL2 (Linux/Mac)
+      if: ${{matrix.os != 'windows-latest'}}
       shell: bash
       run: |
-        echo cl
-        cl
+        if [[ ${{matrix.os == 'ubuntu-latest'}} == "true" ]]; then
+          echo sudo apt-get install libsdl2-dev
+          sudo apt-get install libsdl2-dev
+          echo 
+          find /usr -iname SDL.h
+          find /usr -iname libSDL2.a
+          find /usr -iname libSDL2.so
+          find /usr -iname SDL2?Config.cmake
+        elif [[ ${{matrix.os == 'macos-latest'}} == "true" ]]; then
+          echo brew install sdl2
+          brew install sdl2
+          echo 
+          find /usr/local/Cellar/sdl2 -iname SDL.h
+          find /usr/local/Cellar/sdl2 -iname libSDL2.a
+          find /usr/local/Cellar/sdl2 -iname libSDL2.so
+          find /usr/local/Cellar/sdl2 -iname SDL2?Config.cmake
+        fi
 
-    - name: Install SDL Linux
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: sudo apt-get install libsdl2-dev
-
-    - name: Install SDL Macos
-      if: ${{matrix.os == 'macos-latest'}}
-      run: brew install sdl2
-
-    - name: Install SDL Windows
+    - name: Install SDL2 (Windows)
       if: ${{matrix.os == 'windows-latest'}}
       run: |
         Invoke-WebRequest "https://github.com/libsdl-org/SDL/releases/download/release-$env:SDL_VERSION/SDL2-devel-$env:SDL_VERSION-VC.zip" -o C:\SDL.zip
         Expand-Archive C:\SDL.zip -DestinationPath C:\SDL2
-
-    - name: Show location of installed SDL (Linux)
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: |
-        find ${{github.workspace}} -iname SDL.h
-        find ${{github.workspace}} -iname libSDL*
-        find ${{github.workspace}} -iname SDL*Config.cmake
-        find /usr -iname SDL.h
-        find /usr -iname libSDL*
-        find /usr -iname SDL*Config.cmake
-
-    - name: Show location of installed SDL (MacOS)
-      if: ${{matrix.os == 'macos-latest'}}
-      run: |
-        find /usr/local/Cellar/sdl2 -iname SDL.h
-        find /usr/local/Cellar/sdl2 -iname libSDL*
-        find /usr/local/Cellar/sdl2 -iname SDL*Config.cmake
-
-    - name: Show location of installed SDL (Windows)
-      if: ${{matrix.os == 'windows-latest'}}
-      shell: powershell
-      run: |
+        Write-Host ""
         ls C:\SDL2 -Include SDL.h -Recurse -Name
-        ls C:\SDL2 -Include *SDL*.dll -Recurse -Name
-        ls C:\SDL2 -Include SDL*Config.cmake -Recurse -Name
+        ls C:\SDL2 -Include SDL2.lib -Recurse -Name
+        ls C:\SDL2 -Include SDL2.dll -Recurse -Name
+        ls C:\SDL2 -Include SDL2?Config.cmake -Recurse -Name
 
     - name: Tool versions
       shell: bash
-      run: | 
+      run: |
+        if [[ ${{matrix.os == 'windows-latest'}} == "true" ]]; then
+          echo cl
+          cl
+          echo
+        fi
+        echo g++ --version
+        g++ --version
+        echo 
+        echo clang++ --version
+        clang++ --version
+        echo 
         echo cmake --version
         cmake --version
+        echo 
+        echo ninja --version
+        ninja --version
 
     - name: Parameter values
       shell: bash
@@ -441,6 +425,7 @@ jobs:
 
 #====================
 # Comment out because Github Action will launch the GUI but will not be able to stop it
+# so it would run indefinitely, and there is no way to interact with the GUI anyway.
 #====================
     # - name: CMake run
     #   run: > 
