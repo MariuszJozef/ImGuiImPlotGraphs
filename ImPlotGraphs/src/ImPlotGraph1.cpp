@@ -1,13 +1,14 @@
 #include <stdexcept>
-#include <cmath>
 #include <algorithm>
 #include <sstream>
 #include <cstdio>
-
+#include <cmath>
 #include "ImPlotGraph1.hpp"
 
 namespace Code::ImGuiImPlot
 {
+
+extern const float PI;
 
 Plot1::Plot1()
 {
@@ -21,12 +22,12 @@ void Plot1::CalculatePlotCoordinates()
     x.clear();
     y.clear();
 
-    xMin = -selectedXAxisDomain * std::numbers::pi;
-    xMax = selectedXAxisDomain == 0 ? 2 * std::numbers::pi : selectedXAxisDomain * std::numbers::pi;
+    xMin = -selectedXAxisDomain * PI;
+    xMax = selectedXAxisDomain == 0 ? 2 * PI : selectedXAxisDomain * PI;
 
     plotPoints = std::round(plotPointsPerUnitLength * (xMax - xMin));
     xIncrement = (xMax - xMin) / (plotPoints - 1);
-    double period = 2 * std::numbers::pi / wavelength;
+    double period = 2 * PI / wavelength;
 
     for (int i = 0; i < plotPoints; ++i) 
     {
@@ -98,7 +99,7 @@ void Plot1::GenerateXTicks()
 
     for (int i = 0; i < xTicksCount; i++)
     {
-        double nextTick {xMin + i * std::numbers::pi / 2};
+        double nextTick {xMin + i * PI / 2};
         xTicks.push_back(nextTick);
     }
 }

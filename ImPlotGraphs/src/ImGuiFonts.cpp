@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <sstream>
 #include "SDL.h"
 #include "ImGuiFonts.hpp"
 

@@ -9,6 +9,8 @@
 namespace Code::ImGuiImPlot
 {
 
+extern const float PI;
+
 class Plot1 : public PlotGeneric
 {
 public:
@@ -56,13 +58,13 @@ private:
         };
     int selectedXAxisDomain {3};
     double xMin {0.0};
-    double xMax {2 * std::numbers::pi};
+    double xMax {2 * PI};
     double yMin {0.0};
     double yMax {0.0};
     
     float amplitude {1.0F}; // float because its is adjusted in ImGui::SliderFloat
     const float amplitudeMax {5.0F};
-    float wavelength {2.0F * std::numbers::pi};
+    float wavelength {2.0F * PI};
     float xShift {0.0F};
     float yShift {0.0F};
     bool isMarkers {false};

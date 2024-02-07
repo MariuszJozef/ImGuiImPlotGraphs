@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 #include "ImPlotGeneric.hpp"
 
 namespace Code::ImGuiImPlot

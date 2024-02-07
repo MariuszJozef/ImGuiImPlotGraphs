@@ -1,9 +1,12 @@
+#include <cmath>
 #include <algorithm>
 #include "implot.h"
 #include "ImPlotGraph3.hpp"
 
 namespace Code::ImGuiImPlot
 {
+
+extern const float PI;
 
 Plot3::Plot3()
 {
@@ -140,13 +143,13 @@ void Plot3::Graph()
 
 double Plot3::DiffractionPhase(double x)
 {
-    return std::numbers::pi * slitWidthMm * x / wavelengthMm 
+    return PI * slitWidthMm * x / wavelengthMm 
         / std::sqrt(screenPerpDistanceMm * screenPerpDistanceMm + x * x);
 }
 
 double Plot3::InterferencePhaseWithoutSlitNumber(double x)
 {
-    return std::numbers::pi * slitSeparationMm * x / wavelengthMm 
+    return PI * slitSeparationMm * x / wavelengthMm 
         / std::sqrt(screenPerpDistanceMm * screenPerpDistanceMm + x * x);
 }
 
